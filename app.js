@@ -1,7 +1,7 @@
 /* ================= SQL YARD · CLIENTE ================= */
 const CONFIG = {
   url: 'https://ndugekayjlxznlrqwtiw.supabase.co',
-  key: 'COLE_AQUI_SUA_CHAVE_PUBLICA',   // Project Settings → API → "anon" ou "publishable" key
+  key: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5kdWdla2F5amx4em5scnF3dGl3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE1ODkyNDMsImV4cCI6MjEwNzE2NTI0M30.j-Ia8qqHgf36MMn5OdQx7SgpFtVUOnqsJ_RPvX-RBak',   // Project Settings → API → "anon" ou "publishable" key
   fn: 'game'
 };
 const CONFIGURED = CONFIG.key && !CONFIG.key.startsWith('COLE_');
