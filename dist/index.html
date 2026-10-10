@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SQL Yard · Detetives de Dados</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Special+Elite&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#e9dfc8;--bg2:#f4ecd8;--card:#faf4e4;--ink:#2b2218;--muted:#7b6a53;--line:#cfbf9d;
+  --accent:#a3361f;--accent-ink:#fff7ea;--gold:#9a6b12;--ok:#2f6b3a;--err:#b3261e;--code:#fbf7ec;
+  --l0:#3f7d4e;--l1:#b07a1a;--l2:#a3361f;--l3:#5b3a8c;
+  --head:'Special Elite','Courier New',ui-monospace,monospace;--mono:'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace;--body:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){--bg:#0d0e11;--bg2:#13151a;--card:#171a20;--ink:#e6e1d3;--muted:#8d887a;--line:#2a2e37;--accent:#e2a43a;--accent-ink:#1a1303;--gold:#e2a43a;--ok:#5fb877;--err:#ef6a60;--code:#0b0c0f;--l0:#5fb877;--l1:#e2a43a;--l2:#ef6a60;--l3:#a98bf0}
+}
+:root[data-theme="dark"]{--bg:#0d0e11;--bg2:#13151a;--card:#171a20;--ink:#e6e1d3;--muted:#8d887a;--line:#2a2e37;--accent:#e2a43a;--accent-ink:#1a1303;--gold:#e2a43a;--ok:#5fb877;--err:#ef6a60;--code:#0b0c0f;--l0:#5fb877;--l1:#e2a43a;--l2:#ef6a60;--l3:#a98bf0}
+html{scroll-padding-top:env(safe-area-inset-top,0px);height:100%}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);line-height:1.5;min-height:100%;
+  background-image:radial-gradient(circle at 20% 0%,color-mix(in srgb,var(--accent) 7%,transparent),transparent 40%)}
+code,pre,.sql,.input,.col,.tname{font-family:var(--mono)}
+h1,h2,h3{font-family:var(--head);font-weight:400;margin:0}
+button{font:inherit;color:inherit;cursor:pointer}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;display:flex;align-items:center;gap:14px;padding:10px 16px;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--head);font-size:1.25rem;letter-spacing:.04em;cursor:pointer;background:none;border:0;padding:0}
+.brand i{font-style:normal;color:var(--accent)}
+.brand small{display:block;font-family:var(--body);font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.stats{margin-left:auto;min-width:130px;max-width:230px;flex:1}
+#rankName{font-family:var(--head);font-size:.95rem;color:var(--gold)}
+.bar{height:6px;background:var(--line);border-radius:4px;overflow:hidden;margin:3px 0}
+.bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .4s}
+#xpTxt{font-size:.7rem;color:var(--muted);font-family:var(--mono)}
+.iconbtn{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:6px 10px;font-size:.85rem}
+.iconbtn:hover{border-color:var(--accent)}
+main{max-width:1200px;margin:0 auto;padding:18px 16px 60px}
+.hero{position:relative;background:var(--card);border:1px solid var(--line);border-radius:6px;padding:26px 24px;margin-bottom:18px;overflow:hidden}
+.hero h1{font-size:clamp(1.8rem,5vw,2.8rem);letter-spacing:.02em}
+.hero p{max-width:62ch;color:var(--muted);margin:.6rem 0}
+.hero code{background:var(--code);padding:1px 6px;border-radius:4px;border:1px solid var(--line);color:var(--ink)}
+.herostats{display:flex;gap:18px;flex-wrap:wrap;font-family:var(--mono);font-size:.85rem;color:var(--muted)}
+.herostats b{color:var(--ink)}
+.stamp{position:absolute;right:18px;top:16px;border:3px double var(--accent);color:var(--accent);font-family:var(--head);padding:2px 10px;transform:rotate(6deg);letter-spacing:.2em;font-size:.8rem;opacity:.8}
+.stamp.ok{position:static;display:inline-block;color:var(--ok);border-color:var(--ok);margin-bottom:10px;transform:rotate(-3deg)}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:16px 0}
+.chips{display:flex;gap:6px;flex-wrap:wrap;flex:1}
+.chip{background:var(--card);border:1px solid var(--line);border-radius:99px;padding:5px 13px;font-size:.85rem}
+.chip.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.search{background:var(--card);border:1px solid var(--line);color:var(--ink);padding:7px 12px;border-radius:8px;min-width:200px;font:inherit}
+.lvl{margin-top:26px}
+.lvl h2{font-size:1.5rem;display:flex;align-items:center;gap:10px}
+.lvl h2 small{font-family:var(--mono);font-size:.75rem;color:var(--muted);margin-left:auto}
+.dot{width:12px;height:12px;border-radius:50%;background:var(--lc)}
+.l0{--lc:var(--l0)}.l1{--lc:var(--l1)}.l2{--lc:var(--l2)}.l3{--lc:var(--l3)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px;margin-top:12px}
+.card{text-align:left;background:var(--card);border:1px solid var(--line);border-top:3px solid var(--lc);border-radius:6px;padding:14px;display:flex;flex-direction:column;gap:6px;transition:transform .15s,border-color .15s}
+.card:hover{transform:translateY(-3px);border-color:var(--accent)}
+.card.done{opacity:.78}
+.cardtop{display:flex;justify-content:space-between;font-family:var(--mono);font-size:.72rem;color:var(--muted)}
+.card .xp{color:var(--gold)}
+.card h3{font-size:1.15rem}
+.card p{margin:0;font-size:.85rem;color:var(--muted);flex:1;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.tags{display:flex;gap:6px;flex-wrap:wrap}
+.tag{font-size:.7rem;border:1px solid var(--line);border-radius:4px;padding:1px 7px;font-family:var(--mono);color:var(--muted)}
+.tag.yard{color:var(--accent);border-color:var(--accent)}
+.empty{color:var(--muted);text-align:center;padding:40px 0}
+.foot{margin-top:40px;text-align:center}
+.linkbtn{background:none;border:0;color:var(--muted);text-decoration:underline;padding:4px}
+.linkbtn:hover{color:var(--accent)}
+/* caso */
+.casebar{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.lvlbadge{font-family:var(--mono);font-size:.75rem;border:1px solid var(--lc);color:var(--lc);border-radius:4px;padding:2px 9px}
+.caselayout{display:grid;gap:14px;grid-template-columns:1fr}
+@media (min-width:980px){.caselayout{grid-template-columns:minmax(330px,420px) 1fr;align-items:start}.left{position:sticky;top:calc(70px + env(safe-area-inset-top,0px));max-height:calc(100vh - 90px);overflow:auto;padding-right:4px}}
+.left,.right{display:flex;flex-direction:column;gap:14px;min-width:0}
+.casehead{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--lc);border-radius:6px;padding:14px}
+.casehead h1{font-size:1.8rem;margin:2px 0 8px}
+.num{font-family:var(--mono);font-size:.75rem;color:var(--muted)}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:14px}
+.panel h3{font-size:1.1rem;margin-bottom:8px;display:flex;align-items:baseline;gap:10px}
+.panel h3 small{font-family:var(--mono);font-size:.7rem;color:var(--muted);margin-left:auto}
+.panel p{margin:.4rem 0}
+.goal{padding:8px 10px;background:var(--bg2);border-left:3px solid var(--accent);border-radius:3px}
+.note{font-size:.8rem;color:var(--muted)}
+.tbl{border-top:1px dashed var(--line);padding:9px 0}
+.tbl:first-of-type{border-top:0}
+.tblhead{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.tname{font-weight:500;color:var(--accent);font-size:.95rem}
+.cnt{font-size:.72rem;color:var(--muted);font-family:var(--mono)}
+.mini{margin-left:auto;font-size:.72rem;background:var(--bg2);border:1px solid var(--line);border-radius:5px;padding:2px 8px}
+.mini:hover{border-color:var(--accent)}
+.tdesc{font-size:.8rem;color:var(--muted);margin:3px 0 6px!important}
+.cols{display:flex;flex-wrap:wrap;gap:4px}
+.col{font-size:.72rem;background:var(--code);border:1px solid var(--line);border-radius:4px;padding:1px 7px;color:var(--ink)}
+.col:hover{border-color:var(--accent);color:var(--accent)}
+.sql,.input,.notes{width:100%;background:var(--code);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:10px;font-size:.88rem;line-height:1.5}
+.sql{resize:vertical;min-height:140px;tab-size:2}
+.sql:focus,.input:focus,.notes:focus,.search:focus{outline:2px solid var(--accent);outline-offset:0}
+.notes{font-family:var(--body);min-height:90px;resize:vertical}
+.row{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.input{flex:1;min-width:160px;font-family:var(--body)}
+.btn{border:1px solid var(--line);background:var(--bg2);border-radius:7px;padding:8px 16px}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:600}
+.btn.danger{background:var(--err);color:#fff;border-color:var(--err);font-weight:600}
+.btn.ghost{background:transparent}
+.hints{padding-left:18px;margin:6px 0}
+.hints pre{margin:0 0 8px;white-space:pre-wrap;font-size:.8rem;background:var(--code);padding:6px 8px;border-radius:5px;border:1px solid var(--line)}
+.results{min-height:60px}
+.rescount{font-family:var(--mono);font-size:.75rem;color:var(--muted);margin-bottom:6px}
+.tablewrap{overflow-x:auto;max-height:420px;overflow-y:auto;border:1px solid var(--line);border-radius:6px}
+table{border-collapse:collapse;width:100%;font-family:var(--mono);font-size:.8rem}
+th,td{padding:5px 10px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
+th{position:sticky;top:0;background:var(--bg2);color:var(--gold);font-weight:500}
+tbody tr:nth-child(even){background:color-mix(in srgb,var(--bg2) 55%,transparent)}
+.null{color:var(--muted);font-style:italic}
+.err{border-left:4px solid var(--err);background:color-mix(in srgb,var(--err) 10%,transparent);padding:10px 12px;border-radius:4px;font-size:.88rem}
+.accmsg{margin-top:8px;font-size:.88rem;min-height:1.2em}
+.accmsg.bad{color:var(--err)}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);display:flex;align-items:center;justify-content:center;padding:16px;z-index:50;overflow:auto}
+.modal{background:var(--card);border:1px solid var(--line);border-radius:8px;max-width:560px;width:100%;padding:22px;max-height:90vh;overflow:auto}
+.modal h2{font-size:1.6rem;margin-bottom:8px}
+.code{background:var(--code);border:1px solid var(--line);border-radius:6px;padding:10px;font-size:.8rem;overflow:auto;margin:6px 0 0;white-space:pre}
+.reflist{display:grid;gap:8px;margin:10px 0}
+.reflist div{display:flex;flex-direction:column;gap:2px;font-size:.85rem}
+.reflist code{background:var(--code);border:1px solid var(--line);padding:3px 8px;border-radius:4px;font-size:.78rem;overflow-x:auto}
+@media (max-width:560px){.stats{max-width:none}.brand small{display:none}.hero{padding:20px 16px}.stamp{display:none}}
+
+.sub{font-family:var(--head);color:var(--accent);margin:2px 0 0!important;letter-spacing:.12em;text-transform:uppercase;font-size:.85rem}
+.btn.sm{padding:6px 12px;font-size:.85rem;white-space:nowrap}
+.userchip{display:flex;align-items:center;gap:6px;background:var(--card);border:1px solid var(--line);border-radius:99px;padding:3px 12px 3px 4px}
+.userchip:hover{border-color:var(--accent)}
+.userchip .av{width:28px;height:28px;border-radius:50%;background:var(--bg2);display:grid;place-items:center;font-size:1rem}
+.userchip .nick{max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.85rem}
+.guestbar{margin-top:12px;padding:9px 12px;background:var(--bg2);border-left:3px solid var(--gold);border-radius:3px;font-size:.88rem}
+.guestbar.warn{border-color:var(--err)}
+.loading{text-align:center;padding:80px 0;color:var(--muted)}
+.authtabs{display:flex;gap:6px;margin-bottom:12px}
+.authtabs button{flex:1;padding:8px;border:1px solid var(--line);background:var(--bg2);border-radius:7px}
+.authtabs button.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:600}
+.form{display:flex;flex-direction:column;gap:12px;margin-top:10px}
+.form label,.lbl{display:flex;flex-direction:column;gap:4px;font-size:.85rem}
+.form small{color:var(--muted)}
+.avgrid{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-top:4px}
+.avbtn{font-size:1.4rem;padding:6px 0;background:var(--bg2);border:1px solid var(--line);border-radius:8px}
+.avbtn.on{border-color:var(--accent);outline:2px solid var(--accent)}
+.okmsg{color:var(--ok)}
+table.board td:first-child,table.board th:first-child{width:48px}
+table.board tr.me{background:color-mix(in srgb,var(--accent) 18%,transparent)}
+.iconbtn{white-space:nowrap}
+@media (max-width:560px){.userchip .nick{display:none}.userchip{padding:3px}.top{gap:8px;padding:8px 10px}.stats{min-width:90px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <button class="brand" onclick="renderHome()" aria-label="Início"><i>⌕</i><span>SQL YARD<small>Detetives de dados</small></span></button>
+  <div class="stats"><div id="rankName">Estagiário</div><div class="bar"><i id="xpBar"></i></div><div id="xpTxt"></div></div>
+  <button class="iconbtn" id="btnBoard" title="Ranking">🏆</button>
+  <button class="iconbtn" id="btnRef" title="Cola de SQL">SQL?</button>
+  <button class="iconbtn" id="btnTheme" title="Alternar tema">◐</button>
+  <div id="userArea"></div>
+</header>
+<main id="app"></main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script>
+/* ================= MOTOR SQL (somente SELECT, sem eval) ================= */
+class SqlError extends Error {}
+const AGG = new Set(['COUNT', 'SUM', 'AVG', 'MIN', 'MAX']);
+const RESERVED = new Set(['SELECT','FROM','WHERE','GROUP','ORDER','BY','HAVING','LIMIT','OFFSET','JOIN','INNER','LEFT','RIGHT','OUTER','CROSS','ON','AS','AND','OR','NOT','IN','IS','NULL','LIKE','BETWEEN','DISTINCT','ASC','DESC','CASE','WHEN','THEN','ELSE','END','EXISTS','UNION','ALL']);
+
+function tokenize(sql) {
+  sql = sql.replace(/[\u2018\u2019]/g, "'").replace(/[\u201C\u201D]/g, '"');
+  const toks = []; let i = 0; const n = sql.length;
+  while (i < n) {
+    const ch = sql[i];
+    if (/\s/.test(ch)) { i++; continue; }
+    if (ch === '-' && sql[i + 1] === '-') { while (i < n && sql[i] !== '\n') i++; continue; }
+    if (ch === '/' && sql[i + 1] === '*') { const e = sql.indexOf('*/', i + 2); i = e < 0 ? n : e + 2; continue; }
+    const st = i;
+    if (ch === "'") {
+      let s = ''; i++;
+      for (;;) {
+        if (i >= n) throw new SqlError('Um texto entre aspas simples não foi fechado.');
+        if (sql[i] === "'") { if (sql[i + 1] === "'") { s += "'"; i += 2; continue; } i++; break; }
+        s += sql[i++];
+      }
+      toks.push({ t: 'str', v: s, raw: sql.slice(st, i), s: st, e: i }); continue;
+    }
+    if (ch === '"' || ch === '`') {
+      const e = sql.indexOf(ch, i + 1);
+      if (e < 0) throw new SqlError('Um identificador entre aspas não foi fechado.');
+      const v = sql.slice(i + 1, e); i = e + 1;
+      toks.push({ t: 'id', v, l: v.toLowerCase(), u: '', raw: sql.slice(st, i), s: st, e: i }); continue;
+    }
+    if (/[0-9]/.test(ch) || (ch === '.' && /[0-9]/.test(sql[i + 1] || ''))) {
+      let j = i; while (j < n && /[0-9.]/.test(sql[j])) j++;
+      toks.push({ t: 'num', v: parseFloat(sql.slice(i, j)), raw: sql.slice(i, j), s: i, e: j }); i = j; continue;
+    }
+    if (/[A-Za-z_\u00C0-\u024F]/.test(ch)) {
+      let j = i; while (j < n && /[A-Za-z0-9_\u00C0-\u024F]/.test(sql[j])) j++;
+      const v = sql.slice(i, j);
+      toks.push({ t: 'id', v, l: v.toLowerCase(), u: v.toUpperCase(), raw: v, s: i, e: j }); i = j; continue;
+    }
+    const two = sql.slice(i, i + 2);
+    if (['<=', '>=', '<>', '!=', '||', '=='].includes(two)) { toks.push({ t: 'op', v: two, raw: two, s: i, e: i + 2 }); i += 2; continue; }
+    if ('=<>+-*/%(),.;'.includes(ch)) { toks.push({ t: 'op', v: ch, raw: ch, s: i, e: i + 1 }); i++; continue; }
+    throw new SqlError(`Caractere inesperado: "${ch}"`);
+  }
+  toks.push({ t: 'eof', raw: '', s: n, e: n });
+  return toks;
+}
+
+class Parser {
+  constructor(sql) { this.sql = sql; this.t = tokenize(sql); this.i = 0; }
+  peek(o = 0) { return this.t[Math.min(this.i + o, this.t.length - 1)]; }
+  isKw(k, o = 0) { const x = this.peek(o); return x.t === 'id' && x.u === k; }
+  eatKw(k) { if (this.isKw(k)) { this.i++; return true; } return false; }
+  expectKw(k) { if (!this.eatKw(k)) this.err(`esperava ${k}`); }
+  isOp(v, o = 0) { const x = this.peek(o); return x.t === 'op' && x.v === v; }
+  eatOp(v) { if (this.isOp(v)) { this.i++; return true; } return false; }
+  expectOp(v) { if (!this.eatOp(v)) this.err(`esperava "${v}"`); }
+  err(msg) { const x = this.peek(); throw new SqlError(`Erro de sintaxe: ${msg} (perto de ${x.t === 'eof' ? 'o fim da consulta' : '"' + x.raw + '"'}).`); }
+  ident() {
+    const x = this.peek();
+    if (x.t !== 'id') this.err('esperava um nome');
+    this.i++; return x;
+  }
+  canAlias() { const x = this.peek(); return x.t === 'id' && (x.u === '' || !RESERVED.has(x.u)); }
+
+  parseQuery() {
+    const q = this.parseSelect();
+    while (this.eatOp(';'));
+    if (this.peek().t !== 'eof') this.err('texto inesperado depois da consulta');
+    return q;
+  }
+  parseSelect() {
+    this.expectKw('SELECT');
+    const distinct = this.eatKw('DISTINCT'); if (!distinct) this.eatKw('ALL');
+    const items = [];
+    do { items.push(this.parseItem()); } while (this.eatOp(','));
+    let from = null; const joins = [];
+    if (this.eatKw('FROM')) {
+      from = this.parseSource();
+      for (;;) {
+        if (this.eatOp(',')) { joins.push({ type: 'cross', src: this.parseSource() }); continue; }
+        let type = null;
+        if (this.isKw('JOIN')) { this.i++; type = 'inner'; }
+        else if (this.isKw('INNER') && this.isKw('JOIN', 1)) { this.i += 2; type = 'inner'; }
+        else if (this.isKw('LEFT')) { this.i++; this.eatKw('OUTER'); this.expectKw('JOIN'); type = 'left'; }
+        else if (this.isKw('CROSS') && this.isKw('JOIN', 1)) { this.i += 2; type = 'cross'; }
+        else if (this.isKw('RIGHT')) throw new SqlError('RIGHT JOIN não é suportado aqui. Troque a ordem das tabelas e use LEFT JOIN.');
+        else break;
+        const src = this.parseSource(); let on = null;
+        if (type !== 'cross') { this.expectKw('ON'); on = this.parseExpr(); }
+        joins.push({ type, src, on });
+      }
+    }
+    let where = null, group = [], having = null, order = [], limit = null, offset = null;
+    if (this.eatKw('WHERE')) where = this.parseExpr();
+    if (this.isKw('GROUP')) { this.i++; this.expectKw('BY'); do { group.push(this.parseExpr()); } while (this.eatOp(',')); }
+    if (this.eatKw('HAVING')) having = this.parseExpr();
+    if (this.isKw('ORDER')) {
+      this.i++; this.expectKw('BY');
+      do { const e = this.parseExpr(); let desc = false; if (this.eatKw('DESC')) desc = true; else this.eatKw('ASC'); order.push({ e, desc }); } while (this.eatOp(','));
+    }
+    if (this.eatKw('LIMIT')) { limit = this.parseAdd(); if (this.eatKw('OFFSET')) offset = this.parseAdd(); else if (this.eatOp(',')) { offset = limit; limit = this.parseAdd(); } }
+    else if (this.eatKw('OFFSET')) offset = this.parseAdd();
+    if (this.isKw('UNION')) throw new SqlError('UNION não é suportado nesta delegacia. Tente JOIN ou subconsultas.');
+    return { k: 'select', distinct, items, from, joins, where, group, having, order, limit, offset };
+  }
+  parseItem() {
+    if (this.isOp('*')) { this.i++; return { star: true }; }
+    if (this.peek().t === 'id' && this.isOp('.', 1) && this.isOp('*', 2)) { const t = this.peek().l; this.i += 3; return { star: true, table: t }; }
+    const s = this.peek().s;
+    const expr = this.parseExpr();
+    const e = this.t[this.i - 1].e;
+    let alias = null;
+    if (this.eatKw('AS')) { const x = this.peek(); if (x.t === 'str') { this.i++; alias = x.v; } else alias = this.ident().v; }
+    else if (this.canAlias()) alias = this.ident().v;
+    const text = this.sql.slice(s, e).trim();
+    let name = alias;
+    if (!name) name = expr.k === 'col' ? expr.name : text;
+    return { expr, alias: alias ? alias.toLowerCase() : null, name };
+  }
+  parseSource() {
+    if (this.eatOp('(')) {
+      const sub = this.parseSelect(); this.expectOp(')');
+      this.eatKw('AS');
+      if (!this.canAlias()) this.err('toda subconsulta no FROM precisa de um apelido');
+      return { sub, alias: this.ident().l };
+    }
+    const name = this.ident().l; let alias = name;
+    if (this.eatKw('AS')) alias = this.ident().l; else if (this.canAlias()) alias = this.ident().l;
+    return { name, alias };
+  }
+  parseExpr() { return this.parseOr(); }
+  parseOr() { let l = this.parseAnd(); while (this.eatKw('OR')) l = { k: 'or', l, r: this.parseAnd() }; return l; }
+  parseAnd() { let l = this.parseNot(); while (this.eatKw('AND')) l = { k: 'and', l, r: this.parseNot() }; return l; }
+  parseNot() { if (this.eatKw('NOT')) return { k: 'not', e: this.parseNot() }; return this.parseCmp(); }
+  parseCmp() {
+    let l = this.parseAdd();
+    for (;;) {
+      const x = this.peek();
+      if (x.t === 'op' && ['=', '<>', '!=', '<', '>', '<=', '>=', '=='].includes(x.v)) {
+        this.i++; l = { k: 'cmp', op: x.v === '!=' ? '<>' : x.v === '==' ? '=' : x.v, l, r: this.parseAdd() }; continue;
+      }
+      let neg = false;
+      if (this.isKw('NOT') && (this.isKw('LIKE', 1) || this.isKw('IN', 1) || this.isKw('BETWEEN', 1))) { this.i++; neg = true; }
+      if (this.eatKw('LIKE')) { l = { k: 'like', l, r: this.parseAdd(), neg }; continue; }
+      if (this.eatKw('IN')) {
+        this.expectOp('(');
+        let node;
+        if (this.isKw('SELECT')) node = { k: 'in', l, sub: this.parseSelect(), neg };
+        else { const list = []; do { list.push(this.parseExpr()); } while (this.eatOp(',')); node = { k: 'in', l, list, neg }; }
+        this.expectOp(')'); l = node; continue;
+      }
+      if (this.eatKw('BETWEEN')) { const a = this.parseAdd(); this.expectKw('AND'); const b = this.parseAdd(); l = { k: 'between', l, a, b, neg }; continue; }
+      if (this.isKw('IS')) { this.i++; const n = this.eatKw('NOT'); this.expectKw('NULL'); l = { k: 'isnull', l, neg: n }; continue; }
+      if (neg) this.err('esperava LIKE, IN ou BETWEEN');
+      break;
+    }
+    return l;
+  }
+  parseAdd() {
+    let l = this.parseMul();
+    for (;;) {
+      const x = this.peek();
+      if (x.t === 'op' && (x.v === '+' || x.v === '-' || x.v === '||')) { this.i++; l = { k: 'ar', op: x.v, l, r: this.parseMul() }; } else break;
+    }
+    return l;
+  }
+  parseMul() {
+    let l = this.parseUnary();
+    for (;;) {
+      const x = this.peek();
+      if (x.t === 'op' && (x.v === '*' || x.v === '/' || x.v === '%')) { this.i++; l = { k: 'ar', op: x.v, l, r: this.parseUnary() }; } else break;
+    }
+    return l;
+  }
+  parseUnary() {
+    if (this.eatOp('-')) return { k: 'neg', e: this.parseUnary() };
+    if (this.eatOp('+')) return this.parseUnary();
+    return this.parsePrimary();
+  }
+  parsePrimary() {
+    const x = this.peek();
+    if (x.t === 'num') { this.i++; return { k: 'lit', v: x.v }; }
+    if (x.t === 'str') { this.i++; return { k: 'lit', v: x.v }; }
+    if (x.t === 'op' && x.v === '(') {
+      this.i++;
+      if (this.isKw('SELECT')) { const sub = this.parseSelect(); this.expectOp(')'); return { k: 'scalar', sub }; }
+      const e = this.parseExpr(); this.expectOp(')'); return e;
+    }
+    if (x.t === 'id') {
+      if (x.u === 'NULL') { this.i++; return { k: 'lit', v: null }; }
+      if (x.u === 'TRUE') { this.i++; return { k: 'lit', v: 1 }; }
+      if (x.u === 'FALSE') { this.i++; return { k: 'lit', v: 0 }; }
+      if (x.u === 'CASE') return this.parseCase();
+      if (x.u === 'EXISTS') { this.i++; this.expectOp('('); const sub = this.parseSelect(); this.expectOp(')'); return { k: 'exists', sub }; }
+      if (this.isOp('(', 1)) {
+        this.i += 2;
+        const name = x.u || x.v.toUpperCase();
+        let distinct = false, star = false; const args = [];
+        if (this.isOp('*')) { this.i++; star = true; }
+        else if (!this.isOp(')')) { distinct = this.eatKw('DISTINCT'); do { args.push(this.parseExpr()); } while (this.eatOp(',')); }
+        this.expectOp(')');
+        return { k: 'fn', name, args, distinct, star };
+      }
+      if (x.u && RESERVED.has(x.u)) this.err('esperava um valor ou nome de coluna');
+      this.i++;
+      if (this.isOp('.') && this.peek(1).t === 'id') { this.i++; const c = this.ident(); return { k: 'col', table: x.l, name: c.l }; }
+      return { k: 'col', table: null, name: x.l };
+    }
+    this.err('esperava um valor ou nome de coluna');
+  }
+  parseCase() {
+    this.expectKw('CASE');
+    let base = null;
+    if (!this.isKw('WHEN')) base = this.parseExpr();
+    const whens = [];
+    while (this.eatKw('WHEN')) { const c = this.parseExpr(); this.expectKw('THEN'); whens.push({ c, v: this.parseExpr() }); }
+    let els = null; if (this.eatKw('ELSE')) els = this.parseExpr();
+    this.expectKw('END');
+    return { k: 'case', base, whens, els };
+  }
+}
+
+let CUR_DB = {};
+function toB(v) { if (v == null) return null; if (typeof v === 'boolean') return v; if (typeof v === 'number') return v !== 0; const f = parseFloat(v); return isNaN(f) ? false : f !== 0; }
+function cmpv(a, b) {
+  if (typeof a === 'boolean') a = +a; if (typeof b === 'boolean') b = +b;
+  if (typeof a === 'number' && typeof b === 'string' && b.trim() !== '' && !isNaN(+b)) b = +b;
+  if (typeof b === 'number' && typeof a === 'string' && a.trim() !== '' && !isNaN(+a)) a = +a;
+  if (typeof a !== typeof b) return typeof a === 'number' ? -1 : 1;
+  return a < b ? -1 : a > b ? 1 : 0;
+}
+function likeRe(p) { return new RegExp('^' + String(p).replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/%/g, '[\\s\\S]*').replace(/_/g, '[\\s\\S]') + '$', 'i'); }
+function hasAgg(n) {
+  if (!n || typeof n !== 'object') return false;
+  if (Array.isArray(n)) return n.some(hasAgg);
+  if (n.k === 'select') return false;
+  if (n.k === 'fn' && AGG.has(n.name)) return true;
+  return Object.values(n).some(v => v && typeof v === 'object' && hasAgg(v));
+}
+function lookup(n, c) {
+  for (let x = c; x; x = x.parent) {
+    const r = x.row;
+    if (r) {
+      if (n.table) {
+        if (r[n.table]) { if (n.name in r[n.table]) return r[n.table][n.name]; throw new SqlError(`A tabela "${n.table}" não tem a coluna "${n.name}".`); }
+      } else {
+        let found, cnt = 0;
+        for (const a in r) if (n.name in r[a]) { cnt++; found = r[a][n.name]; }
+        if (cnt > 1) throw new SqlError(`A coluna "${n.name}" é ambígua. Diga de qual tabela: tabela.${n.name}`);
+        if (cnt === 1) return found;
+      }
+    }
+    if (!n.table && x.out && n.name in x.out) return x.out[n.name];
+  }
+  throw new SqlError(n.table ? `Não existe a tabela/apelido "${n.table}" nesta consulta.` : `Coluna desconhecida: "${n.name}". Confira o nome na lista de tabelas.`);
+}
+function aggregate(n, c) {
+  if (!c.group) throw new SqlError(`${n.name}() não pode ser usado no WHERE. Para filtrar resultados agregados use HAVING.`);
+  const rows = c.group;
+  if (n.name === 'COUNT' && n.star) return rows.length;
+  if (!n.args.length) throw new SqlError(`${n.name}() precisa de um argumento.`);
+  let vals = rows.map(r => ev(n.args[0], { row: r, parent: c.parent })).filter(v => v != null);
+  if (n.distinct) vals = [...new Set(vals)];
+  switch (n.name) {
+    case 'COUNT': return vals.length;
+    case 'SUM': return vals.length ? vals.reduce((a, b) => a + Number(b), 0) : null;
+    case 'AVG': return vals.length ? vals.reduce((a, b) => a + Number(b), 0) / vals.length : null;
+    case 'MIN': return vals.length ? vals.reduce((a, b) => cmpv(a, b) <= 0 ? a : b) : null;
+    case 'MAX': return vals.length ? vals.reduce((a, b) => cmpv(a, b) >= 0 ? a : b) : null;
+  }
+}
+function scalarFn(n, c) {
+  const a = n.args.map(x => ev(x, c));
+  const s = v => v == null ? null : String(v);
+  switch (n.name) {
+    case 'UPPER': return a[0] == null ? null : s(a[0]).toUpperCase();
+    case 'LOWER': return a[0] == null ? null : s(a[0]).toLowerCase();
+    case 'LENGTH': case 'LEN': return a[0] == null ? null : s(a[0]).length;
+    case 'TRIM': return a[0] == null ? null : s(a[0]).trim();
+    case 'ABS': return a[0] == null ? null : Math.abs(a[0]);
+    case 'ROUND': return a[0] == null ? null : Number(Number(a[0]).toFixed(a[1] || 0));
+    case 'COALESCE': case 'IFNULL': return a.find(v => v != null) ?? null;
+    case 'REPLACE': return a[0] == null ? null : s(a[0]).split(s(a[1])).join(s(a[2]));
+    case 'SUBSTR': case 'SUBSTRING': { if (a[0] == null) return null; const st = Math.max(1, a[1] || 1) - 1; return a[2] == null ? s(a[0]).slice(st) : s(a[0]).substr(st, a[2]); }
+    case 'CONCAT': return a.map(x => x == null ? '' : x).join('');
+  }
+  throw new SqlError(`Função desconhecida: ${n.name}()`);
+}
+function ev(n, c) {
+  switch (n.k) {
+    case 'lit': return n.v;
+    case 'col': return lookup(n, c);
+    case 'neg': { const v = ev(n.e, c); return v == null ? null : -v; }
+    case 'not': { const v = toB(ev(n.e, c)); return v == null ? null : !v; }
+    case 'and': { const l = toB(ev(n.l, c)); if (l === false) return false; const r = toB(ev(n.r, c)); if (r === false) return false; return (l == null || r == null) ? null : true; }
+    case 'or': { const l = toB(ev(n.l, c)); if (l === true) return true; const r = toB(ev(n.r, c)); if (r === true) return true; return (l == null || r == null) ? null : false; }
+    case 'cmp': {
+      const l = ev(n.l, c), r = ev(n.r, c);
+      if (l == null || r == null) return null;
+      const d = cmpv(l, r);
+      switch (n.op) { case '=': return d === 0; case '<>': return d !== 0; case '<': return d < 0; case '>': return d > 0; case '<=': return d <= 0; case '>=': return d >= 0; }
+      return null;
+    }
+    case 'ar': {
+      const l = ev(n.l, c), r = ev(n.r, c);
+      if (l == null || r == null) return null;
+      if (n.op === '||') return String(l) + String(r);
+      const a = Number(l), b = Number(r);
+      switch (n.op) { case '+': return a + b; case '-': return a - b; case '*': return a * b; case '/': return b === 0 ? null : a / b; case '%': return b === 0 ? null : a % b; }
+      return null;
+    }
+    case 'like': { const l = ev(n.l, c), r = ev(n.r, c); if (l == null || r == null) return null; const m = likeRe(r).test(String(l)); return n.neg ? !m : m; }
+    case 'between': {
+      const l = ev(n.l, c), a = ev(n.a, c), b = ev(n.b, c);
+      if (l == null || a == null || b == null) return null;
+      const m = cmpv(l, a) >= 0 && cmpv(l, b) <= 0; return n.neg ? !m : m;
+    }
+    case 'isnull': { const v = ev(n.l, c); return n.neg ? v != null : v == null; }
+    case 'in': {
+      const l = ev(n.l, c); if (l == null) return null;
+      let vals;
+      if (n.sub) { const r = execSelect(n.sub, c); if (r.cols.length !== 1) throw new SqlError('A subconsulta dentro de IN deve devolver apenas uma coluna.'); vals = r.rows.map(x => x[0]); }
+      else vals = n.list.map(x => ev(x, c));
+      const found = vals.some(v => v != null && cmpv(l, v) === 0);
+      if (found) return !n.neg;
+      if (vals.some(v => v == null)) return null;
+      return !!n.neg;
+    }
+    case 'exists': return execSelect(n.sub, c).rows.length > 0;
+    case 'scalar': { const r = execSelect(n.sub, c); if (r.cols.length !== 1) throw new SqlError('Uma subconsulta usada como valor deve devolver apenas uma coluna.'); return r.rows.length ? r.rows[0][0] : null; }
+    case 'case': {
+      const base = n.base ? ev(n.base, c) : null;
+      for (const w of n.whens) {
+        const cv = ev(w.c, c);
+        if (n.base ? (cv != null && base != null && cmpv(base, cv) === 0) : toB(cv) === true) return ev(w.v, c);
+      }
+      return n.els ? ev(n.els, c) : null;
+    }
+    case 'fn': return AGG.has(n.name) ? aggregate(n, c) : scalarFn(n, c);
+  }
+  throw new SqlError('Expressão não suportada.');
+}
+const blank = cols => Object.fromEntries(cols.map(x => [x, null]));
+function execSelect(q, parent) {
+  const schema = []; let rows = [{}]; const nullRow = {};
+  const srcRows = src => {
+    if (src.sub) {
+      const r = execSelect(src.sub, null);
+      const cols = r.cols.map(x => String(x).toLowerCase());
+      return { alias: src.alias, cols, objs: r.rows.map(a => Object.fromEntries(cols.map((cn, i) => [cn, a[i]]))) };
+    }
+    const t = CUR_DB[src.name];
+    if (!t) throw new SqlError(`A tabela "${src.name}" não existe. Tabelas deste caso: ${Object.keys(CUR_DB).join(', ')}.`);
+    return { alias: src.alias, cols: t.cols, objs: t.rows };
+  };
+  if (q.from) {
+    const f = srcRows(q.from); schema.push(f); nullRow[f.alias] = blank(f.cols);
+    rows = f.objs.map(o => ({ [f.alias]: o }));
+    for (const j of q.joins) {
+      const s = srcRows(j.src);
+      if (nullRow[s.alias]) throw new SqlError(`O apelido "${s.alias}" foi usado duas vezes. Dê apelidos diferentes (ex.: ${s.alias} a, ${s.alias} b).`);
+      const out = [];
+      for (const r of rows) {
+        let matched = false;
+        for (const o of s.objs) {
+          const nr = { ...r, [s.alias]: o };
+          if (j.type === 'cross' || toB(ev(j.on, { row: nr, parent })) === true) { out.push(nr); matched = true; }
+        }
+        if (!matched && j.type === 'left') out.push({ ...r, [s.alias]: blank(s.cols) });
+      }
+      rows = out; schema.push(s); nullRow[s.alias] = blank(s.cols);
+    }
+  }
+  if (q.where) rows = rows.filter(r => toB(ev(q.where, { row: r, parent })) === true);
+
+  // colunas de saída
+  const cols = [];
+  for (const it of q.items) {
+    if (it.star) {
+      const list = it.table ? schema.filter(s => s.alias === it.table) : schema;
+      if (!list.length) throw new SqlError(it.table ? `Não existe a tabela/apelido "${it.table}".` : 'SELECT * precisa de FROM.');
+      for (const s of list) for (const cn of s.cols) cols.push({ name: cn, node: { k: 'col', table: s.alias, name: cn } });
+    } else cols.push({ name: it.name, alias: it.alias, node: it.expr });
+  }
+  const aliasNode = {}; q.items.forEach(it => { if (it.alias) aliasNode[it.alias] = it.expr; });
+  const resolveRef = g => {
+    if (g.k === 'lit' && typeof g.v === 'number') { const c = cols[g.v - 1]; if (!c) throw new SqlError('Posição inválida em GROUP BY/ORDER BY.'); return c.node; }
+    if (g.k === 'col' && !g.table && aliasNode[g.name]) {
+      const inSchema = schema.some(s => s.cols.includes(g.name));
+      if (!inSchema) return aliasNode[g.name];
+    }
+    return g;
+  };
+  const aggMode = q.group.length > 0 || cols.some(c => hasAgg(c.node)) || (q.having && hasAgg(q.having)) || q.order.some(o => hasAgg(o.e));
+  let groups;
+  if (aggMode) {
+    if (q.group.length) {
+      const gx = q.group.map(resolveRef); const map = new Map();
+      for (const r of rows) { const key = JSON.stringify(gx.map(g => ev(g, { row: r, parent }))); if (!map.has(key)) map.set(key, []); map.get(key).push(r); }
+      groups = [...map.values()];
+    } else groups = [rows];
+  } else groups = rows.map(r => [r]);
+
+  let recs = [];
+  for (const g of groups) {
+    const ctx = aggMode ? { row: g[0] || nullRow, group: g, parent } : { row: g[0], parent };
+    const vals = cols.map(c => ev(c.node, ctx));
+    const out = {}; cols.forEach((c, i) => { out[(c.alias || String(c.name)).toLowerCase()] = vals[i]; });
+    ctx.out = out;
+    if (q.having && toB(ev(q.having, ctx)) !== true) continue;
+    recs.push({ vals, ctx });
+  }
+  if (q.distinct) { const seen = new Set(); recs = recs.filter(r => { const k = JSON.stringify(r.vals); if (seen.has(k)) return false; seen.add(k); return true; }); }
+  if (q.order.length) {
+    recs.forEach(r => {
+      r.keys = q.order.map(o => {
+        if (o.e.k === 'lit' && typeof o.e.v === 'number') { if (!cols[o.e.v - 1]) throw new SqlError('Posição inválida em ORDER BY.'); return r.vals[o.e.v - 1]; }
+        return ev(o.e, r.ctx);
+      });
+    });
+    const idx = recs.map((r, i) => [r, i]);
+    idx.sort((A, B) => {
+      for (let k = 0; k < q.order.length; k++) {
+        const a = A[0].keys[k], b = B[0].keys[k]; let d;
+        if (a == null && b == null) d = 0; else if (a == null) d = -1; else if (b == null) d = 1; else d = cmpv(a, b);
+        if (d !== 0) return q.order[k].desc ? -d : d;
+      }
+      return A[1] - B[1];
+    });
+    recs = idx.map(x => x[0]);
+  }
+  if (q.offset) recs = recs.slice(Number(ev(q.offset, { row: {} })) || 0);
+  if (q.limit) recs = recs.slice(0, Number(ev(q.limit, { row: {} })));
+  return { cols: cols.map(c => c.name), rows: recs.map(r => r.vals) };
+}
+function makeDB(tables) {
+  const db = {};
+  for (const t of tables) db[t.name.toLowerCase()] = { cols: t.cols || Object.keys(t.rows[0] || {}), rows: t.rows };
+  return db;
+}
+function runSQL(db, sql) {
+  CUR_DB = db;
+  const ast = new Parser(sql.trim()).parseQuery();
+  return execSelect(ast, null);
+}
+if (typeof module !== 'undefined') module.exports = { runSQL, makeDB, SqlError };
+
+const CASES=[{"i":0,"id":"c1","num":1,"titulo":"A Maleta Vermelha","d":"Uma maleta com contratos secretos desapareceu da suíte presidencial do Hotel Imperial durante uma recepção.","k":"roubo","l":"Hotel Imperial","m":1,"lvl":0,"tag":"WHERE","yard":false,"xp":50},{"i":1,"id":"c2","num":2,"titulo":"O Disco de Ouro","d":"O disco de ouro de um astro do rock foi levado do Estúdio Vinil Dourado durante uma festa de lançamento.","k":"roubo","l":"Estúdio Vinil Dourado","m":1,"lvl":0,"tag":"WHERE","yard":false,"xp":75},{"i":2,"id":"c3","num":3,"titulo":"O Relógio do Barão","d":"O relógio de bolso do Barão sumiu durante o leilão beneficente da Casa Sotero.","k":"roubo","l":"Casa Sotero","m":1,"lvl":0,"tag":"WHERE","yard":false,"xp":100},{"i":3,"id":"c4","num":4,"titulo":"A Coroa de Esmeraldas","d":"A coroa de esmeraldas da Duquesa desapareceu da vitrine do Museu Aurora na noite de inauguração.","k":"roubo","l":"Museu Aurora","m":2,"lvl":0,"tag":"ORDER BY · LIMIT","yard":false,"xp":90},{"i":4,"id":"c5","num":5,"titulo":"O Violino Fantasma","d":"Um violino Stradivarius sumiu do camarim do Teatro Municipal minutos antes do concerto.","k":"roubo","l":"Teatro Municipal","m":2,"lvl":0,"tag":"ORDER BY · LIMIT","yard":false,"xp":115},{"i":5,"id":"c6","num":6,"titulo":"O Troféu Roubado","d":"A taça do campeonato sumiu do Clube Atlético Cerrado na noite da grande final.","k":"roubo","l":"Clube Atlético Cerrado","m":2,"lvl":0,"tag":"ORDER BY · LIMIT","yard":false,"xp":140},{"i":6,"id":"c7","num":7,"titulo":"O Cofre do Cassino","d":"R$ 2 milhões em fichas evaporaram do cofre do Cassino Estrela do Sul.","k":"roubo","l":"Cassino Estrela do Sul","m":3,"lvl":1,"tag":"JOIN","yard":false,"xp":150},{"i":7,"id":"c8","num":8,"titulo":"O Código-Fonte","d":"O código-fonte do aplicativo da startup Nimbus foi copiado e vendido a uma concorrente.","k":"roubo","l":"Startup Nimbus","m":3,"lvl":1,"tag":"JOIN","yard":false,"xp":175},{"i":8,"id":"c9","num":9,"titulo":"A Receita Secreta","d":"A receita secreta do doce mais famoso da Confeitaria Imperial foi roubada da sala do chef.","k":"roubo","l":"Confeitaria Imperial","m":3,"lvl":1,"tag":"JOIN","yard":false,"xp":200},{"i":9,"id":"c10","num":10,"titulo":"O Manuscrito Perdido","d":"Um manuscrito raro de 1822 sumiu do cofre da Biblioteca Central.","k":"roubo","l":"Biblioteca Central","m":4,"lvl":1,"tag":"Subconsultas · NOT IN","yard":false,"xp":190},{"i":10,"id":"c11","num":11,"titulo":"O Quadro Falso","d":"A obra-prima da Galeria Prisma foi trocada por uma falsificação perfeita.","k":"roubo","l":"Galeria Prisma","m":4,"lvl":1,"tag":"Subconsultas · NOT IN","yard":false,"xp":215},{"i":11,"id":"c12","num":12,"titulo":"A Fórmula Vita","d":"A fórmula de um remédio inovador desapareceu do cofre do Laboratório Vita.","k":"roubo","l":"Laboratório Vita","m":4,"lvl":1,"tag":"Subconsultas · NOT IN","yard":false,"xp":240},{"i":12,"id":"c13","num":13,"titulo":"Morte na Mansão Valverde","d":"O magnata Augusto Valverde foi encontrado morto na biblioteca de sua mansão durante um jantar.","k":"morte","l":"Mansão Valverde","m":5,"lvl":1,"tag":"GROUP BY · HAVING","yard":false,"xp":230},{"i":13,"id":"c14","num":14,"titulo":"O Chef Envenenado","d":"O renomado chef Lucien caiu morto na cozinha do restaurante Lumière em plena noite de estreia.","k":"morte","l":"Restaurante Lumière","m":5,"lvl":1,"tag":"GROUP BY · HAVING","yard":false,"xp":255},{"i":14,"id":"c15","num":15,"titulo":"O Juiz Silenciado","d":"O juiz Armando foi achado sem vida em seu gabinete no Fórum Central.","k":"morte","l":"Fórum Central","m":5,"lvl":1,"tag":"GROUP BY · HAVING","yard":false,"xp":280},{"i":15,"id":"c16","num":16,"titulo":"O Baile de Máscaras","d":"Um convidado foi encontrado sem vida no Salão Régio durante um baile de máscaras.","k":"morte","l":"Salão Régio","m":6,"lvl":1,"tag":"Leitura de pistas","yard":false,"xp":270},{"i":16,"id":"c17","num":17,"titulo":"Último Ato","d":"O ator principal desabou morto no palco do Teatro Opala diante de uma plateia lotada.","k":"morte","l":"Teatro Opala","m":6,"lvl":1,"tag":"Leitura de pistas","yard":false,"xp":295},{"i":17,"id":"c18","num":18,"titulo":"Fim de Festival","d":"O produtor do festival foi encontrado morto nos bastidores do Festival Sol Maior.","k":"morte","l":"Festival Sol Maior","m":6,"lvl":1,"tag":"Leitura de pistas","yard":false,"xp":320},{"i":18,"id":"c19","num":19,"titulo":"Crime no Expresso Cerrado","d":"Um passageiro foi achado morto na cabine do trem Expresso Cerrado. O assassino fugiu pela cidade usando vários meios de transporte.","k":"morte","l":"Expresso Cerrado","m":7,"lvl":2,"tag":"Scotland Yard · JOIN + GROUP BY","yard":true,"xp":300},{"i":19,"id":"c20","num":20,"titulo":"Maré Vermelha","d":"Um hóspede foi encontrado morto no convés do iate Maré Alta. O culpado desembarcou e despistou a polícia pela cidade.","k":"morte","l":"Iate Maré Alta","m":7,"lvl":2,"tag":"Scotland Yard · JOIN + GROUP BY","yard":true,"xp":325},{"i":20,"id":"c21","num":21,"titulo":"O Carro-Forte","d":"Um carro-forte do Banco Aurora foi esvaziado em plena avenida. O ladrão fugiu misturando táxi, ônibus, metrô e balsa.","k":"roubo","l":"Banco Aurora","m":7,"lvl":2,"tag":"Scotland Yard · JOIN + GROUP BY","yard":true,"xp":350},{"i":21,"id":"c22","num":22,"titulo":"Silêncio no Observatório","d":"O astrônomo Dr. Hélio foi encontrado morto no Observatório da Serra. A polícia suspeita que houve um mandante.","k":"morte","l":"Observatório da Serra","m":8,"lvl":2,"tag":"Self JOIN","yard":false,"xp":340},{"i":22,"id":"c23","num":23,"titulo":"A Herdeira","d":"A herdeira Beatriz morreu após o jantar na Fazenda Santa Clara. Alguém encomendou o crime.","k":"morte","l":"Fazenda Santa Clara","m":8,"lvl":2,"tag":"Self JOIN","yard":false,"xp":365},{"i":23,"id":"c24","num":24,"titulo":"O Tesouro do Museu Naval","d":"O acervo de moedas antigas do Museu Naval foi esvaziado por uma quadrilha com um cabeça por trás.","k":"roubo","l":"Museu Naval","m":8,"lvl":2,"tag":"Self JOIN","yard":false,"xp":390},{"i":24,"id":"c25","num":25,"titulo":"Desfalque no Banco Meridional","d":"R$ 500 mil sumiram de contas do Banco Meridional por meio de saques picotados.","k":"fraude","l":"Banco Meridional","m":9,"lvl":2,"tag":"JOIN triplo · SUM","yard":false,"xp":380},{"i":25,"id":"c26","num":26,"titulo":"A Folha Fantasma","d":"Salários de funcionários inexistentes foram sacados na Prefeitura de Vila Nova.","k":"fraude","l":"Prefeitura de Vila Nova","m":9,"lvl":2,"tag":"JOIN triplo · SUM","yard":false,"xp":405},{"i":26,"id":"c27","num":27,"titulo":"Golpe na Seguradora","d":"Sinistros falsos drenaram o caixa da Seguradora Fênix.","k":"fraude","l":"Seguradora Fênix","m":9,"lvl":2,"tag":"JOIN triplo · SUM","yard":false,"xp":430},{"i":27,"id":"c28","num":28,"titulo":"Incêndio no Armazém 7","d":"Um incêndio criminoso destruiu o Armazém 7 do Cais Norte. É o último de uma série de ataques.","k":"sabot","l":"Armazém 7","m":10,"lvl":2,"tag":"HAVING + subconsulta","yard":false,"xp":420},{"i":28,"id":"c29","num":29,"titulo":"A Orquídea Negra","d":"Uma orquídea rara avaliada em fortuna foi levada do Jardim Botânico. A mesma quadrilha atacou outros alvos.","k":"roubo","l":"Jardim Botânico","m":10,"lvl":2,"tag":"HAVING + subconsulta","yard":false,"xp":445},{"i":29,"id":"c30","num":30,"titulo":"O Piano de Cauda","d":"Um piano histórico desapareceu do Conservatório Mozart, o terceiro roubo parecido na cidade.","k":"roubo","l":"Conservatório Mozart","m":10,"lvl":2,"tag":"HAVING + subconsulta","yard":false,"xp":470},{"i":30,"id":"c31","num":31,"titulo":"Sabotagem no Genoma","d":"O protótipo do Laboratório Genoma foi destruído horas antes da apresentação. O sabotador fugiu pelo metrô, táxis e balsas.","k":"sabot","l":"Laboratório Genoma","m":11,"lvl":3,"tag":"Scotland Yard · múltiplas pistas","yard":true,"xp":800},{"i":31,"id":"c32","num":32,"titulo":"Apagão na Usina","d":"Alguém desligou os geradores da Usina Solar Horizonte e sumiu na madrugada.","k":"sabot","l":"Usina Solar Horizonte","m":11,"lvl":3,"tag":"Scotland Yard · múltiplas pistas","yard":true,"xp":825},{"i":32,"id":"c33","num":33,"titulo":"Hackers no Hospital","d":"Os prontuários do Hospital São Lucas foram apagados por um ataque vindo de dentro, e o autor fugiu da cidade.","k":"sabot","l":"Hospital São Lucas","m":11,"lvl":3,"tag":"Scotland Yard · múltiplas pistas","yard":true,"xp":850},{"i":33,"id":"c34","num":34,"titulo":"O Caixa Dois","d":"Um desvio de verbas foi descoberto na ONG Mãos Dadas. O cofre só abre com chave.","k":"fraude","l":"ONG Mãos Dadas","m":12,"lvl":3,"tag":"JOIN + IN + NOT IN","yard":false,"xp":840},{"i":34,"id":"c35","num":35,"titulo":"O Anel de Noivado","d":"O anel de diamante do prefeito sumiu do Hotel Lago Azul durante o jantar de gala.","k":"roubo","l":"Hotel Lago Azul","m":12,"lvl":3,"tag":"JOIN + IN + NOT IN","yard":false,"xp":865},{"i":35,"id":"c36","num":36,"titulo":"O Carregamento Sumido","d":"Um contêiner de eletrônicos desapareceu do Porto Seco do Cerrado.","k":"roubo","l":"Porto Seco do Cerrado","m":12,"lvl":3,"tag":"JOIN + IN + NOT IN","yard":false,"xp":890}];
+const NIVEIS=["Iniciante","Intermediário","Avançado","Mestre"];
+/* ================= SQL YARD · CLIENTE ================= */
+const CONFIG = {
+  url: 'https://ndugekayjlxznlrqwtiw.supabase.co',
+  key: 'COLE_AQUI_SUA_CHAVE_PUBLICA',   // Project Settings → API → "anon" ou "publishable" key
+  fn: 'game'
+};
+const CONFIGURED = CONFIG.key && !CONFIG.key.startsWith('COLE_');
+const sb = CONFIGURED && window.supabase ? window.supabase.createClient(CONFIG.url, CONFIG.key, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } }) : null;
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const NICK_RE = /^[A-Za-zÀ-ÿ0-9_ .-]{3,20}$/;
+const AVATARS = ['🕵️', '🦉', '🐺', '🦊', '🐈‍⬛', '🔍', '🎩', '🧥', '🚇', '🗝️', '🕶️', '🦅'];
+
+/* ---------- armazenamento local (visitante) ---------- */
+const GK = 'sqlyard_guest_v1';
+let guest = { done: {}, notes: {}, theme: null };
+try { const s = JSON.parse(localStorage.getItem(GK)); if (s) guest = { done: {}, notes: {}, theme: null, ...s }; } catch (e) {}
+const saveGuest = () => { try { localStorage.setItem(GK, JSON.stringify(guest)); } catch (e) {} };
+
+/* ---------- estado ---------- */
+const state = { view: 'home', filter: 'todos', q: '', session: null, profile: null, progress: {}, c: null, db: null, hintTexts: [], wrongs: 0, loading: false, board: null };
+const logged = () => !!state.session;
+const doneMap = () => logged() ? state.progress : guest.done;
+const totalXP = () => Object.values(doneMap()).reduce((a, d) => a + (d.xp || 0), 0);
+const maxXP = CASES.reduce((a, c) => a + c.xp, 0);
+const RANKS = [[0, 'Estagiário'], [200, 'Guarda'], [800, 'Detetive'], [2000, 'Inspetor'], [4500, 'Superintendente'], [9000, 'Lenda do Yard']];
+function rankInfo() {
+  const xp = totalXP(); let i = 0; RANKS.forEach((r, k) => { if (xp >= r[0]) i = k; });
+  const next = RANKS[i + 1];
+  return { name: RANKS[i][1], xp, next, pct: next ? (xp - RANKS[i][0]) / (next[0] - RANKS[i][0]) * 100 : 100 };
+}
+const HINT_COST = [0.15, 0.15, 0.4];
+const potential = () => { let cost = 0; for (let i = 0; i < state.hintTexts.length; i++) cost += HINT_COST[i]; return Math.max(0.2, 1 - cost - state.wrongs * 0.2); };
+
+/* ---------- API ---------- */
+async function api(action, payload = {}) {
+  if (!CONFIGURED) throw new Error('O servidor ainda não foi configurado (falta a chave pública do Supabase).');
+  const token = state.session?.access_token || CONFIG.key;
+  let r;
+  try {
+    r = await fetch(`${CONFIG.url}/functions/v1/${CONFIG.fn}`, { method: 'POST', headers: { 'Content-Type': 'application/json', apikey: CONFIG.key, Authorization: 'Bearer ' + token }, body: JSON.stringify({ action, ...payload }) });
+  } catch (e) { throw new Error('Sem conexão com o servidor. Verifique sua internet.'); }
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(j.error || `Falha no servidor (${r.status}).`);
+  return j;
+}
+const AUTH_ERR = [
+  [/Invalid login credentials/i, 'E-mail ou senha incorretos.'], [/already registered|already been registered/i, 'Este e-mail já tem uma conta. Use "Entrar".'],
+  [/at least 6/i, 'A senha precisa ter pelo menos 6 caracteres.'], [/valid email|invalid format/i, 'Digite um e-mail válido.'],
+  [/Email not confirmed/i, 'Confirme seu e-mail antes de entrar (veja a caixa de entrada e o spam).'], [/rate limit|too many/i, 'Muitas tentativas. Aguarde alguns minutos.'],
+  [/weak|pwned/i, 'Essa senha é fraca ou já vazou. Escolha outra.']
+];
+const authMsg = e => { const m = e?.message || String(e); const f = AUTH_ERR.find(x => x[0].test(m)); return f ? f[1] : m; };
+
+/* ---------- cabeçalho ---------- */
+function renderHeader() {
+  const r = rankInfo();
+  $('#rankName').textContent = r.name;
+  $('#xpTxt').textContent = r.next ? `${r.xp} / ${r.next[0]} XP` : `${r.xp} XP · patente máxima`;
+  $('#xpBar').style.width = Math.min(100, r.pct) + '%';
+  $('#userArea').innerHTML = logged()
+    ? `<button class="userchip" id="btnUser" title="Meu perfil"><span class="av">${esc(state.profile?.avatar || '🕵️')}</span><span class="nick">${esc(state.profile?.nickname || '…')}</span></button>`
+    : `<button class="btn primary sm" id="btnLogin">Entrar / Criar conta</button>`;
+}
+
+/* ---------- HOME ---------- */
+function renderHome() {
+  state.view = 'home'; state.c = null; window.scrollTo(0, 0);
+  const dm = doneMap(), doneN = Object.keys(dm).length, q = state.q.trim().toLowerCase();
+  const filters = [['todos', 'Todos'], ...NIVEIS.map((n, i) => [String(i), n]), ['yard', '🚇 Scotland Yard'], ['pend', 'Pendentes']];
+  let html = `
+  <section class="hero"><div class="stamp">CONFIDENCIAL</div>
+    <h1>SQL Yard</h1>
+    <p class="sub">Detetives de dados</p>
+    <p>Interrogue tabelas, cruze pistas e prenda o culpado usando <b>SQL de verdade</b>. São <b>${CASES.length} casos</b> em 4 níveis, do primeiro <code>WHERE</code> às caçadas estilo <i>Scotland Yard</i> com táxi, ônibus, metrô e balsa.</p>
+    <div class="herostats"><span><b>${doneN}</b>/${CASES.length} casos resolvidos</span><span><b>${totalXP()}</b>/${maxXP} XP</span></div>
+    ${logged() ? '' : `<div class="guestbar">Você está jogando como <b>visitante</b>. <button class="linkbtn" id="btnLogin2">Crie uma conta grátis</button> para salvar seu progresso em qualquer aparelho e entrar no ranking.</div>`}
+    ${CONFIGURED ? '' : `<div class="guestbar warn">⚠ Falta configurar a chave pública do Supabase em <code>CONFIG.key</code> no arquivo.</div>`}
+  </section>
+  <div class="toolbar">
+    <div class="chips">${filters.map(f => `<button class="chip ${state.filter === f[0] ? 'on' : ''}" data-filter="${f[0]}">${f[1]}</button>`).join('')}</div>
+    <input id="search" class="search" type="search" placeholder="Buscar caso…" value="${esc(state.q)}" aria-label="Buscar caso">
+  </div>`;
+  let any = false;
+  NIVEIS.forEach((nome, lvl) => {
+    const list = CASES.filter(c => c.lvl === lvl).filter(c => {
+      if (state.filter === 'yard' && !c.yard) return false;
+      if (state.filter === 'pend' && dm[c.id]) return false;
+      if (/^[0-3]$/.test(state.filter) && +state.filter !== lvl) return false;
+      if (q && !(c.titulo + ' ' + c.d + ' ' + c.tag + ' ' + c.l).toLowerCase().includes(q)) return false;
+      return true;
+    });
+    if (!list.length) return; any = true;
+    const d = CASES.filter(c => c.lvl === lvl && dm[c.id]).length, tot = CASES.filter(c => c.lvl === lvl).length;
+    html += `<section class="lvl l${lvl}"><h2><span class="dot"></span>${nome}<small>${d}/${tot} resolvidos</small></h2><div class="grid">` +
+      list.map(c => {
+        const dn = dm[c.id];
+        return `<button class="card ${dn ? 'done' : ''}" data-case="${c.i}">
+          <div class="cardtop"><span class="num">Caso nº ${String(c.num).padStart(2, '0')}</span><span class="xp">${dn ? '✔ ' + dn.xp : c.xp} XP</span></div>
+          <h3>${esc(c.titulo)}</h3><p>${esc(c.d)}</p>
+          <div class="tags"><span class="tag">${esc(c.tag)}</span>${c.yard ? '<span class="tag yard">🚇 Scotland Yard</span>' : ''}</div></button>`;
+      }).join('') + `</div></section>`;
+  });
+  if (!any) html += `<p class="empty">Nenhum caso encontrado com esses filtros.</p>`;
+  if (!logged()) html += `<footer class="foot"><button class="linkbtn" id="btnResetGuest">Apagar progresso de visitante</button></footer>`;
+  $('#app').innerHTML = html; renderHeader();
+}
+
+/* ---------- RANKING ---------- */
+async function renderBoard() {
+  state.view = 'board'; window.scrollTo(0, 0);
+  $('#app').innerHTML = `<div class="casebar"><button class="linkbtn" id="btnBack">← Todos os casos</button></div><section class="panel"><h3>🏆 Ranking de detetives</h3><div id="boardBox"><p class="note">Carregando…</p></div></section>`;
+  try {
+    if (!sb) throw new Error('Servidor não configurado.');
+    const { data, error } = await sb.rpc('leaderboard', { lim: 50 });
+    if (error) throw error;
+    const me = state.profile?.nickname?.toLowerCase();
+    $('#boardBox').innerHTML = data.length ? `<div class="tablewrap"><table class="board"><thead><tr><th>#</th><th>Detetive</th><th>XP</th><th>Casos</th></tr></thead><tbody>${data.map(r => `<tr class="${me && r.nickname.toLowerCase() === me ? 'me' : ''}"><td>${r.rank}</td><td>${esc(r.avatar)} ${esc(r.nickname)}</td><td>${r.total_xp}</td><td>${r.solved}/${CASES.length}</td></tr>`).join('')}</tbody></table></div>` : '<p class="note">Ninguém resolveu um caso ainda. Seja o primeiro!</p>';
+    if (!logged()) $('#boardBox').insertAdjacentHTML('beforeend', '<p class="note">Crie uma conta para aparecer aqui.</p>');
+  } catch (e) { $('#boardBox').innerHTML = `<div class="err">${esc(e.message || e)}</div>`; }
+}
+
+/* ---------- CASO ---------- */
+async function openCase(i) {
+  if (state.loading) return; state.loading = true;
+  const meta = CASES[i];
+  $('#app').innerHTML = `<div class="loading"><div class="stamp ok">ABRINDO ARQUIVO</div><p>${esc(meta.titulo)}…</p></div>`;
+  try {
+    const c = await api('case', { case_id: meta.id });
+    state.c = { ...meta, ...c }; state.db = makeDB(c.tables);
+    state.hintTexts = c.hints || []; state.wrongs = c.wrongs || 0; state.view = 'case';
+    state.sql = `SELECT * FROM ${c.tables[0].name};`;
+    let notes = guest.notes[meta.id] || '';
+    if (logged() && sb) { const { data } = await sb.from('notes').select('body').eq('case_id', meta.id).maybeSingle(); notes = data?.body || ''; }
+    state.notes = notes; renderCase();
+  } catch (e) {
+    $('#app').innerHTML = `<div class="casebar"><button class="linkbtn" id="btnBack">← Todos os casos</button></div><div class="err"><b>Não foi possível abrir o caso.</b><br>${esc(e.message)}</div>`;
+  } finally { state.loading = false; }
+}
+function renderCase() {
+  const c = state.c; window.scrollTo(0, 0);
+  const dn = doneMap()[c.id];
+  const schema = c.tables.map(t => `
+    <div class="tbl"><div class="tblhead"><code class="tname">${t.name}</code><span class="cnt">${t.rows.length} linhas</span><button class="mini" data-peek="${t.name}">ver dados</button></div>
+      <p class="tdesc">${esc(t.desc)}</p><div class="cols">${t.cols.map(col => `<button class="col" data-ins="${col}">${col}</button>`).join('')}</div></div>`).join('');
+  $('#app').innerHTML = `
+  <div class="casewrap l${c.lvl}">
+    <div class="casebar"><button class="linkbtn" id="btnBack">← Todos os casos</button><span class="lvlbadge l${c.lvl}">${NIVEIS[c.lvl]}</span></div>
+    <div class="caselayout">
+      <aside class="left">
+        <header class="casehead"><span class="num">Caso nº ${String(c.num).padStart(2, '0')}${dn ? ' · resolvido ✔' : ''}</span><h1>${esc(c.titulo)}</h1>
+          <div class="tags"><span class="tag">${esc(c.tag)}</span>${c.yard ? '<span class="tag yard">🚇 Scotland Yard</span>' : ''}<span class="tag">${c.xp} XP</span></div></header>
+        <section class="panel"><h3>Relatório</h3><p>${esc(c.d)}</p>${c.briefing.map(p => `<p>${esc(p)}</p>`).join('')}<p class="goal"><b>Objetivo:</b> ${esc(c.objetivo)}</p></section>
+        <section class="panel"><h3>Tabelas do caso</h3><p class="note">Nomes de tabelas e colunas são sempre em minúsculas. Clique numa coluna para inseri-la no editor.</p>${schema}</section>
+        <section class="panel"><h3>Dicas <small id="xpPot"></small></h3><div id="hintsBox"></div><button class="btn ghost" id="btnHint"></button></section>
+        <section class="panel"><h3>Caderno de anotações</h3><textarea id="notes" class="notes" placeholder="Anote nomes, horários e suspeitas aqui…">${esc(state.notes)}</textarea></section>
+      </aside>
+      <div class="right">
+        <section class="panel editor"><h3>Terminal SQL <small>Ctrl + Enter executa</small></h3>
+          <textarea id="sql" class="sql" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" rows="8">${esc(state.sql)}</textarea>
+          <div class="row"><button class="btn primary" id="btnRun">▶ Executar</button><button class="btn ghost" id="btnClear">Limpar</button><button class="btn ghost" id="btnRef2">Cola SQL</button></div></section>
+        <section class="panel"><h3>Resultado</h3><div id="results" class="results"><p class="note">Execute uma consulta para ver os resultados aqui.</p></div></section>
+        <section class="panel accuse"><h3>⚖ Acusação formal</h3><p class="note">Digite o nome completo do culpado. Cada acusação errada reduz o XP em 20%.</p>
+          <div class="row"><input id="accuse" class="input" type="text" placeholder="Nome e sobrenome" autocomplete="off"><button class="btn danger" id="btnAccuse">Acusar</button></div>
+          <div id="accMsg" class="accmsg" role="status"></div></section>
+      </div>
+    </div>
+  </div>`;
+  renderHints();
+}
+function renderHints() {
+  const c = state.c, n = state.hintTexts.length;
+  $('#hintsBox').innerHTML = n ? '<ol class="hints">' + state.hintTexts.map(h => `<li><pre>${esc(h)}</pre></li>`).join('') + '</ol>' : '<p class="note">Sem dicas por enquanto. Cada dica custa um pouco de XP.</p>';
+  const b = $('#btnHint');
+  if (n >= 3) b.style.display = 'none'; else { b.style.display = ''; b.disabled = false; b.textContent = `Pedir dica ${n + 1}/3 (−${HINT_COST[n] * 100}% XP${n === 2 ? ', revela a solução' : ''})`; }
+  $('#xpPot').textContent = `XP possível: ${Math.round(c.xp * potential())}`;
+}
+async function askHint() {
+  const b = $('#btnHint'); b.disabled = true;
+  try { const r = await api('hint', { case_id: state.c.id, n: state.hintTexts.length + 1 }); state.hintTexts.push(r.text); }
+  catch (e) { alert(e.message); }
+  renderHints();
+}
+function fmt(v) {
+  if (v === null || v === undefined) return '<span class="null">NULL</span>';
+  if (typeof v === 'boolean') return v ? '1' : '0';
+  if (typeof v === 'number' && !Number.isInteger(v)) return String(Math.round(v * 10000) / 10000);
+  return esc(v);
+}
+function execute() {
+  const sql = $('#sql').value; state.sql = sql; const out = $('#results');
+  try {
+    const q = sql.trim();
+    if (!q) throw new SqlError('Escreva uma consulta primeiro.');
+    if (!/^select\b/i.test(q)) throw new SqlError('Na delegacia só é permitido consultar (SELECT). Ninguém altera as provas!');
+    const r = runSQL(state.db, q);
+    if (!r.rows.length) { out.innerHTML = '<p class="note">Consulta executada: 0 linhas. Nenhum registro bate com esses filtros.</p>'; return; }
+    const MAX = 200, rows = r.rows.slice(0, MAX);
+    out.innerHTML = `<div class="rescount">${r.rows.length} linha${r.rows.length > 1 ? 's' : ''}${r.rows.length > MAX ? ` (mostrando as primeiras ${MAX})` : ''}</div>
+      <div class="tablewrap"><table><thead><tr>${r.cols.map(x => `<th>${esc(x)}</th>`).join('')}</tr></thead><tbody>${rows.map(row => `<tr>${row.map(v => `<td>${fmt(v)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+  } catch (e) { out.innerHTML = `<div class="err"><b>${e instanceof SqlError ? 'Erro na consulta' : 'Erro inesperado'}</b><br>${esc(e.message)}</div>`; }
+}
+async function accuse() {
+  const v = $('#accuse').value.trim(), msg = $('#accMsg'), btn = $('#btnAccuse');
+  if (!v) { msg.className = 'accmsg bad'; msg.textContent = 'Digite o nome de um suspeito.'; return; }
+  btn.disabled = true; msg.className = 'accmsg'; msg.textContent = 'Levando a acusação ao promotor…';
+  try {
+    const r = await api('accuse', { case_id: state.c.id, name: v, hints: state.hintTexts.length, wrongs: state.wrongs });
+    if (r.correct) {
+      if (logged()) state.progress[state.c.id] = { xp: r.best };
+      else { const prev = guest.done[state.c.id]; guest.done[state.c.id] = { xp: Math.max(r.xp, prev ? prev.xp : 0) }; saveGuest(); }
+      renderHeader(); showVictory(r);
+    } else {
+      state.wrongs = r.wrongs; renderHints();
+      msg.className = 'accmsg bad'; msg.textContent = `"${v}" foi liberado por falta de provas. XP possível agora: ${r.potential}.`;
+    }
+  } catch (e) { msg.className = 'accmsg bad'; msg.textContent = e.message; }
+  finally { btn.disabled = false; }
+}
+function showVictory(r) {
+  const c = state.c, i = CASES.findIndex(x => x.i === c.i), dm = doneMap();
+  const next = CASES.slice(i + 1).concat(CASES.slice(0, i)).find(x => !dm[x.id]);
+  const m = document.createElement('div'); m.className = 'overlay'; m.id = 'ovl';
+  m.innerHTML = `<div class="modal win"><div class="stamp ok">CASO ENCERRADO</div><h2>${esc(r.culpado)} foi preso!</h2>
+    <p>${r.replay ? 'Você já tinha resolvido este caso; o XP guardado é o melhor resultado.' : `Você ganhou <b>+${r.xp} XP</b>.`} ${state.hintTexts.length ? `Dicas usadas: ${state.hintTexts.length}.` : 'Sem dicas, muito bom!'} ${state.wrongs ? `Acusações erradas: ${state.wrongs}.` : ''}</p>
+    ${logged() ? '' : '<p class="note">Jogando como visitante: <b>crie uma conta</b> para guardar este XP e entrar no ranking.</p>'}
+    <p class="note">Uma solução possível:</p><pre class="code">${esc(r.solucao)}</pre>
+    <div class="row"><button class="btn ghost" data-close="home">Todos os casos</button>${next ? `<button class="btn primary" data-open="${next.i}">Próximo caso →</button>` : ''}</div></div>`;
+  document.body.appendChild(m);
+}
+function showRef() {
+  const R = [['Ver tudo', 'SELECT * FROM tabela;'], ['Colunas escolhidas', 'SELECT nome, hora FROM tabela;'], ['Filtrar', "WHERE sala = 'Cofre' AND hora >= '21:00'"], ['Ou / dentro de uma lista', "WHERE a = 1 OR b IN ('x','y')"], ['Intervalo', "WHERE hora BETWEEN '21:00' AND '22:00'"], ['Texto parcial', "WHERE texto LIKE '%chapéu%'"], ['Ordenar e limitar', 'ORDER BY valor DESC LIMIT 5'], ['Unir tabelas', 'FROM a JOIN b ON b.a_id = a.id'], ['Contar por grupo', 'SELECT x, COUNT(*) AS n FROM t GROUP BY x'], ['Filtrar grupos', 'GROUP BY x HAVING COUNT(*) >= 3'], ['Somar / média', 'SUM(valor), AVG(valor), MIN(...), MAX(...)'], ['Valores únicos', 'SELECT DISTINCT profissao FROM pessoas'], ['Subconsulta', 'WHERE id IN (SELECT pessoa_id FROM chaves)'], ['Excluir da lista', 'WHERE id NOT IN (SELECT pessoa_id FROM alibis)'], ['Mesma tabela 2x', 'FROM encontros a JOIN encontros b ON a.lugar = b.lugar']];
+  modal(`<h2>Cola rápida de SQL</h2><div class="reflist">${R.map(r => `<div><b>${r[0]}</b><code>${esc(r[1])}</code></div>`).join('')}</div><div class="row"><button class="btn primary" data-close="x">Fechar</button></div>`);
+}
+function modal(inner) { closeOvl(); const m = document.createElement('div'); m.className = 'overlay'; m.id = 'ovl'; m.innerHTML = `<div class="modal">${inner}</div>`; document.body.appendChild(m); return m; }
+const closeOvl = () => { const o = $('#ovl'); if (o) o.remove(); };
+function insertAtCursor(txt) { const ta = $('#sql'); if (!ta) return; const s = ta.selectionStart, e = ta.selectionEnd; ta.value = ta.value.slice(0, s) + txt + ta.value.slice(e); ta.selectionStart = ta.selectionEnd = s + txt.length; ta.focus(); state.sql = ta.value; }
+
+/* ---------- CONTA ---------- */
+let authMode = 'signup', pickedAvatar = AVATARS[0];
+function showAuth(mode = 'signup', note = '') {
+  authMode = mode;
+  if (!sb) { modal(`<h2>Contas indisponíveis</h2><p>O servidor ainda não foi configurado: falta a chave pública do Supabase no arquivo do jogo.</p><div class="row"><button class="btn primary" data-close="x">Ok</button></div>`); return; }
+  const su = mode === 'signup';
+  modal(`<div class="authtabs"><button class="${su ? 'on' : ''}" data-authmode="signup">Criar conta</button><button class="${su ? '' : 'on'}" data-authmode="login">Entrar</button></div>
+    <h2>${su ? 'Seu distintivo de detetive' : 'Bem-vindo de volta'}</h2>
+    ${note ? `<p class="note">${esc(note)}</p>` : ''}
+    <div class="form">
+      ${su ? `<label>Apelido <small>(aparece no ranking · 3 a 20 caracteres)</small><input id="fNick" class="input" maxlength="20" autocomplete="nickname" placeholder="Ex.: Inspetor Select"></label>
+      <div><span class="lbl">Avatar</span><div class="avgrid">${AVATARS.map(a => `<button type="button" class="avbtn ${a === pickedAvatar ? 'on' : ''}" data-av="${a}">${a}</button>`).join('')}</div></div>` : ''}
+      <label>E-mail<input id="fMail" class="input" type="email" autocomplete="email" placeholder="voce@exemplo.com"></label>
+      <label>Senha<input id="fPass" class="input" type="password" autocomplete="${su ? 'new-password' : 'current-password'}" placeholder="mínimo 6 caracteres"></label>
+      <div id="authMsg" class="accmsg" role="status"></div>
+      <button class="btn primary" id="btnAuth">${su ? 'Criar conta' : 'Entrar'}</button>
+      ${su ? '' : '<button class="linkbtn" id="btnForgot">Esqueci minha senha</button>'}
+      <button class="linkbtn" data-close="x">Continuar como visitante</button>
+    </div></div>`);
+}
+const authSay = (t, bad = true) => { const m = $('#authMsg'); if (m) { m.className = 'accmsg' + (bad ? ' bad' : ' okmsg'); m.textContent = t; } };
+async function doAuth() {
+  const email = $('#fMail').value.trim(), pass = $('#fPass').value, btn = $('#btnAuth');
+  if (!email || !pass) return authSay('Preencha e-mail e senha.');
+  btn.disabled = true;
+  try {
+    if (authMode === 'signup') {
+      const nick = $('#fNick').value.trim();
+      if (!NICK_RE.test(nick)) { btn.disabled = false; return authSay('Apelido: de 3 a 20 letras, números, espaço, ponto, hífen ou _.'); }
+      const ok = await sb.rpc('nickname_available', { n: nick });
+      if (ok.data === false) { btn.disabled = false; return authSay('Esse apelido já está em uso. Escolha outro.'); }
+      const { data, error } = await sb.auth.signUp({ email, password: pass, options: { data: { nickname: nick, avatar: pickedAvatar }, emailRedirectTo: location.origin + location.pathname } });
+      if (error) throw error;
+      if (!data.session) { modal(`<h2>Confirme seu e-mail</h2><p>Enviamos um link para <b>${esc(email)}</b>. Clique nele para ativar sua conta e depois volte aqui para entrar.</p><p class="note">Não achou? Olhe a caixa de spam.</p><div class="row"><button class="btn primary" data-close="x">Entendi</button></div>`); return; }
+      closeOvl();
+    } else {
+      const { error } = await sb.auth.signInWithPassword({ email, password: pass });
+      if (error) throw error;
+      closeOvl();
+    }
+  } catch (e) { authSay(authMsg(e)); btn.disabled = false; }
+}
+async function forgot() {
+  const email = $('#fMail').value.trim(); if (!email) return authSay('Digite seu e-mail acima primeiro.');
+  const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: location.origin + location.pathname });
+  error ? authSay(authMsg(error)) : authSay('Se este e-mail tiver conta, enviamos um link para redefinir a senha.', false);
+}
+function showNewPassword() {
+  modal(`<h2>Nova senha</h2><div class="form"><label>Nova senha<input id="fNew" class="input" type="password" autocomplete="new-password"></label><div id="authMsg" class="accmsg"></div><button class="btn primary" id="btnNewPass">Salvar senha</button></div>`);
+}
+async function showProfile() {
+  const p = state.profile || {}; pickedAvatar = p.avatar || AVATARS[0];
+  const solved = Object.keys(state.progress).length;
+  modal(`<h2>${esc(p.avatar || '🕵️')} ${esc(p.nickname || '')}</h2>
+    <p class="note">${esc(state.session?.user?.email || '')}</p>
+    <p><b>${rankInfo().name}</b> · ${totalXP()} XP · ${solved}/${CASES.length} casos</p>
+    <div class="form"><label>Apelido<input id="fNick" class="input" maxlength="20" value="${esc(p.nickname || '')}"></label>
+    <div><span class="lbl">Avatar</span><div class="avgrid">${AVATARS.map(a => `<button type="button" class="avbtn ${a === pickedAvatar ? 'on' : ''}" data-av="${a}">${a}</button>`).join('')}</div></div>
+    <div id="authMsg" class="accmsg"></div>
+    <button class="btn primary" id="btnSaveProfile">Salvar perfil</button>
+    <button class="btn ghost" id="btnBoard2">🏆 Ver ranking</button>
+    <button class="btn ghost" id="btnLogout">Sair da conta</button></div>`);
+}
+async function saveProfile() {
+  const nick = $('#fNick').value.trim();
+  if (!NICK_RE.test(nick)) return authSay('Apelido: de 3 a 20 letras, números, espaço, ponto, hífen ou _.');
+  const { error } = await sb.from('profiles').update({ nickname: nick, avatar: pickedAvatar }).eq('id', state.session.user.id);
+  if (error) return authSay(error.code === '23505' ? 'Esse apelido já está em uso.' : authMsg(error));
+  state.profile = { nickname: nick, avatar: pickedAvatar }; renderHeader(); authSay('Perfil atualizado!', false);
+}
+async function loadAccount() {
+  const uid = state.session.user.id;
+  for (let t = 0; t < 3 && !state.profile; t++) {
+    const { data } = await sb.from('profiles').select('nickname,avatar').eq('id', uid).maybeSingle();
+    if (data) state.profile = data; else await new Promise(r => setTimeout(r, 600));
+  }
+  const { data } = await sb.from('progress').select('case_id,xp');
+  state.progress = {}; (data || []).forEach(r => state.progress[r.case_id] = { xp: r.xp });
+}
+async function onSession(session) {
+  state.session = session; state.profile = null; state.progress = {};
+  if (session && sb) { try { await loadAccount(); } catch (e) { console.error(e); } }
+  renderHeader();
+  if (state.view === 'home') renderHome(); else if (state.view === 'board') renderBoard();
+}
+
+/* ---------- eventos ---------- */
+let noteTimer;
+document.addEventListener('click', ev => {
+  const t = ev.target.closest('button, .overlay'); if (!t) return;
+  if (t.classList.contains('overlay')) { if (ev.target === t) closeOvl(); return; }
+  if (t.dataset.filter !== undefined) { state.filter = t.dataset.filter; renderHome(); return; }
+  if (t.dataset.case !== undefined) { openCase(+t.dataset.case); return; }
+  if (t.dataset.open !== undefined) { closeOvl(); openCase(+t.dataset.open); return; }
+  if (t.dataset.close !== undefined) { closeOvl(); if (t.dataset.close === 'home') renderHome(); return; }
+  if (t.dataset.peek) { $('#sql').value = `SELECT * FROM ${t.dataset.peek};`; execute(); return; }
+  if (t.dataset.ins) { insertAtCursor(t.dataset.ins); return; }
+  if (t.dataset.authmode) { showAuth(t.dataset.authmode); return; }
+  if (t.dataset.av) { pickedAvatar = t.dataset.av; document.querySelectorAll('.avbtn').forEach(b => b.classList.toggle('on', b.dataset.av === pickedAvatar)); return; }
+  switch (t.id) {
+    case 'btnBack': renderHome(); break;
+    case 'btnRun': execute(); break;
+    case 'btnClear': $('#sql').value = ''; $('#sql').focus(); break;
+    case 'btnRef': case 'btnRef2': showRef(); break;
+    case 'btnHint': askHint(); break;
+    case 'btnAccuse': accuse(); break;
+    case 'btnTheme': toggleTheme(); break;
+    case 'btnBoard': renderBoard(); break;
+    case 'btnBoard2': closeOvl(); renderBoard(); break;
+    case 'btnLogin': case 'btnLogin2': showAuth('signup'); break;
+    case 'btnUser': showProfile(); break;
+    case 'btnAuth': doAuth(); break;
+    case 'btnForgot': forgot(); break;
+    case 'btnSaveProfile': saveProfile(); break;
+    case 'btnLogout': closeOvl(); sb.auth.signOut(); break;
+    case 'btnNewPass': (async () => { const { error } = await sb.auth.updateUser({ password: $('#fNew').value }); error ? authSay(authMsg(error)) : (closeOvl()); })(); break;
+    case 'btnResetGuest': if (confirm('Apagar seu progresso de visitante?')) { guest = { done: {}, notes: {}, theme: guest.theme }; saveGuest(); renderHome(); } break;
+  }
+});
+document.addEventListener('input', ev => {
+  if (ev.target.id === 'search') { state.q = ev.target.value; const p = ev.target.selectionStart; renderHome(); const s = $('#search'); s.focus(); s.setSelectionRange(p, p); }
+  if (ev.target.id === 'notes' && state.c) {
+    const body = ev.target.value, id = state.c.id; state.notes = body;
+    clearTimeout(noteTimer);
+    noteTimer = setTimeout(async () => {
+      if (logged() && sb) await sb.from('notes').upsert({ user_id: state.session.user.id, case_id: id, body, updated_at: new Date().toISOString() });
+      else { guest.notes[id] = body; saveGuest(); }
+    }, 900);
+  }
+});
+document.addEventListener('keydown', ev => {
+  if (ev.key === 'Escape') closeOvl();
+  if (ev.target.id === 'sql') {
+    if ((ev.ctrlKey || ev.metaKey) && ev.key === 'Enter') { ev.preventDefault(); execute(); }
+    if (ev.key === 'Tab') { ev.preventDefault(); insertAtCursor('  '); }
+  }
+  if (ev.target.id === 'accuse' && ev.key === 'Enter') accuse();
+  if ((ev.target.id === 'fPass' || ev.target.id === 'fMail') && ev.key === 'Enter') doAuth();
+});
+function applyTheme() { if (guest.theme) document.documentElement.setAttribute('data-theme', guest.theme); }
+function toggleTheme() {
+  const cur = document.documentElement.getAttribute('data-theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  guest.theme = cur === 'dark' ? 'light' : 'dark'; applyTheme(); saveGuest();
+}
+applyTheme(); renderHome();
+if (sb) {
+  sb.auth.onAuthStateChange((event, session) => {
+    setTimeout(() => {   // evita travar o cliente do Supabase dentro do callback
+      if (event === 'PASSWORD_RECOVERY') showNewPassword();
+      if (event === 'INITIAL_SESSION' || event === 'SIGNED_IN' || event === 'SIGNED_OUT' || event === 'USER_UPDATED') {
+        if (event === 'SIGNED_IN' && state.session?.user?.id === session?.user?.id) return;
+        onSession(session);
+      }
+    }, 0);
+  });
+}
+
+</script>
+</body>
+</html>
