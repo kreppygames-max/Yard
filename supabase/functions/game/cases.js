@@ -395,4 +395,4 @@ function buildCase(meta, seedAdd = 0) {
   const o = MECHS[meta.m].f(R, cr);
   return { ...meta, ...o, dicas: [...o.dicas, 'Solução completa:\n' + o.solucao], objetivo: `Descubra quem é ${KIND_R[cr.k] ? 'o ' + KIND_R[cr.k] : 'o culpado'} e digite o nome completo na acusação.` };
 }
-module.exports = { CASES, buildCase, NIVEIS };
+export { CASES, buildCase, NIVEIS };

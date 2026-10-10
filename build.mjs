@@ -1,9 +1,5 @@
 import fs from 'fs';
-import { readFileSync } from 'node:fs';
-import { createRequire } from 'node:module';
-const _m = { exports: {} };
-new Function('module', 'exports', 'require', readFileSync(new URL('./supabase/functions/game/cases.js', import.meta.url), 'utf8'))(_m, _m.exports, createRequire(import.meta.url));
-const pkg = _m.exports;
+import * as pkg from './supabase/functions/game/cases.js';
 const { CASES, NIVEIS } = pkg;
 const meta=CASES.map(({i,id,num,titulo,d,k,l,m,lvl,tag,yard,xp})=>({i,id,num,titulo,d,k,l,m,lvl,tag,yard,xp}));
 const metaJs=`const CASES=${JSON.stringify(meta)};\nconst NIVEIS=${JSON.stringify(NIVEIS)};`;
