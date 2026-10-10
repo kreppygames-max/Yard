@@ -390,7 +390,985 @@ const CASES = [];
     k++;
   }
 }
+
+/* ---------- Casos do nível Iniciante: escritos à mão (trilha de aprendizado) ----------
+   Substituem os 6 primeiros casos (c1 a c6). Cada um tem esquema, história e pistas próprios. */
+const INICIANTE = [
+  {
+    "i": 0,
+    "id": "c1",
+    "num": 1,
+    "titulo": "A Maleta Vermelha",
+    "d": "Uma maleta com contratos secretos desapareceu da suíte presidencial do Hotel Imperial durante uma recepção.",
+    "k": "roubo",
+    "l": "Hotel Imperial",
+    "m": 1,
+    "lvl": 0,
+    "tag": "SELECT · WHERE",
+    "yard": false,
+    "xp": 50,
+    "tables": [
+      {
+        "name": "acessos_suite",
+        "desc": "Cada abertura da porta da suíte 1201 durante o dia.",
+        "cols": [
+          "id",
+          "hora",
+          "tipo",
+          "cracha"
+        ],
+        "rows": [
+          {
+            "id": 1,
+            "hora": "08:55",
+            "tipo": "chave-mestra",
+            "cracha": "F-103"
+          },
+          {
+            "id": 2,
+            "hora": "13:20",
+            "tipo": "cartao-hospede",
+            "cracha": "HOSPEDE"
+          },
+          {
+            "id": 3,
+            "hora": "17:45",
+            "tipo": "cartao-hospede",
+            "cracha": "HOSPEDE"
+          },
+          {
+            "id": 4,
+            "hora": "20:10",
+            "tipo": "interfone",
+            "cracha": "F-215"
+          },
+          {
+            "id": 5,
+            "hora": "21:14",
+            "tipo": "chave-mestra",
+            "cracha": "F-241"
+          },
+          {
+            "id": 6,
+            "hora": "21:26",
+            "tipo": "cartao-hospede",
+            "cracha": "HOSPEDE"
+          }
+        ]
+      },
+      {
+        "name": "funcionarios",
+        "desc": "Funcionários do hotel e seus crachás.",
+        "cols": [
+          "cracha",
+          "nome",
+          "cargo"
+        ],
+        "rows": [
+          {
+            "cracha": "F-103",
+            "nome": "Lúcia Prado",
+            "cargo": "camareira"
+          },
+          {
+            "cracha": "F-198",
+            "nome": "Marta Coelho",
+            "cargo": "gerente"
+          },
+          {
+            "cracha": "F-215",
+            "nome": "Otávio Brandão",
+            "cargo": "mordomo"
+          },
+          {
+            "cracha": "F-241",
+            "nome": "Heitor Valmont",
+            "cargo": "recepcionista noturno"
+          },
+          {
+            "cracha": "F-260",
+            "nome": "Bruno Teles",
+            "cargo": "porteiro"
+          }
+        ]
+      }
+    ],
+    "culpado": "Heitor Valmont",
+    "briefing": [
+      "A maleta vermelha do embaixador estava na suíte 1201. Ela sumiu entre 20:00 e 22:00, enquanto a recepção acontecia no salão principal. Nenhuma porta foi arrombada.",
+      "O hotel guarda um registro de cada abertura da porta da suíte. Hóspedes entram com o cartão do quarto. Funcionários usam crachá, e só quem tem a chave-mestra consegue entrar quando o hóspede está fora.",
+      "📘 Aula 1 · Seu primeiro SELECT. Para ver uma tabela inteira: SELECT * FROM nome_da_tabela;  O asterisco (*) significa 'todas as colunas'.",
+      "📘 Para filtrar linhas, use WHERE. Texto vai entre aspas simples e números ficam sem aspas. Exemplos de outra investigação: WHERE cidade = 'Londres'  e  WHERE andar = 3."
+    ],
+    "solucao": "SELECT * FROM acessos_suite WHERE tipo = 'chave-mestra';\n-- a abertura das 21:14 tem o cracha F-241\nSELECT * FROM funcionarios WHERE cracha = 'F-241';",
+    "dicas": [
+      "Comece olhando as provas: SELECT * FROM acessos_suite;",
+      "A coluna tipo mostra como a porta foi aberta. Filtre pela chave-mestra:\nSELECT * FROM acessos_suite WHERE tipo = 'chave-mestra';\nVão aparecer duas linhas. Só uma está na janela de 20:00 às 22:00.",
+      "Solução completa:\nSELECT * FROM acessos_suite WHERE tipo = 'chave-mestra';\n-- a abertura das 21:14 tem o cracha F-241\nSELECT * FROM funcionarios WHERE cracha = 'F-241';"
+    ],
+    "objetivo": "Descobrir quem abriu a suíte com a chave-mestra no horário do roubo e dar o nome completo dessa pessoa."
+  },
+  {
+    "i": 1,
+    "id": "c2",
+    "num": 2,
+    "titulo": "O Disco de Ouro",
+    "d": "O disco de ouro de um astro do rock foi levado do Estúdio Vinil Dourado durante uma festa de lançamento.",
+    "k": "roubo",
+    "l": "Estúdio Vinil Dourado",
+    "m": 1,
+    "lvl": 0,
+    "tag": "AND · OR",
+    "yard": false,
+    "xp": 70,
+    "tables": [
+      {
+        "name": "convidados",
+        "desc": "Quem estava na festa.",
+        "cols": [
+          "id",
+          "nome",
+          "funcao"
+        ],
+        "rows": [
+          {
+            "id": 1,
+            "nome": "Vivian Rocha",
+            "funcao": "cantora"
+          },
+          {
+            "id": 2,
+            "nome": "Dante Moraes",
+            "funcao": "produtor"
+          },
+          {
+            "id": 3,
+            "nome": "Célia Nobre",
+            "funcao": "jornalista"
+          },
+          {
+            "id": 4,
+            "nome": "Otto Brandt",
+            "funcao": "técnico de som"
+          },
+          {
+            "id": 5,
+            "nome": "Bianca Lemos",
+            "funcao": "empresária"
+          },
+          {
+            "id": 6,
+            "nome": "Leonel Faria",
+            "funcao": "baterista"
+          },
+          {
+            "id": 7,
+            "nome": "Iara Santos",
+            "funcao": "fotógrafa"
+          },
+          {
+            "id": 8,
+            "nome": "Caio Drummond",
+            "funcao": "segurança"
+          }
+        ]
+      },
+      {
+        "name": "acessos_salas",
+        "desc": "Cada vez que alguém entrou numa sala do estúdio.",
+        "cols": [
+          "id",
+          "convidado_id",
+          "sala",
+          "hora"
+        ],
+        "rows": [
+          {
+            "id": 1,
+            "convidado_id": 1,
+            "sala": "Estúdio A",
+            "hora": "21:30"
+          },
+          {
+            "id": 2,
+            "convidado_id": 5,
+            "sala": "Cofre",
+            "hora": "21:40"
+          },
+          {
+            "id": 3,
+            "convidado_id": 2,
+            "sala": "Cofre",
+            "hora": "22:10"
+          },
+          {
+            "id": 4,
+            "convidado_id": 3,
+            "sala": "Bar",
+            "hora": "22:30"
+          },
+          {
+            "id": 5,
+            "convidado_id": 4,
+            "sala": "Cofre",
+            "hora": "22:35"
+          },
+          {
+            "id": 6,
+            "convidado_id": 6,
+            "sala": "Cofre",
+            "hora": "22:50"
+          },
+          {
+            "id": 7,
+            "convidado_id": 7,
+            "sala": "Cofre",
+            "hora": "23:20"
+          },
+          {
+            "id": 8,
+            "convidado_id": 8,
+            "sala": "Camarim",
+            "hora": "22:15"
+          },
+          {
+            "id": 9,
+            "convidado_id": 1,
+            "sala": "Camarim",
+            "hora": "22:40"
+          }
+        ]
+      },
+      {
+        "name": "saidas",
+        "desc": "Quem saiu do estúdio, por qual porta e a que horas.",
+        "cols": [
+          "id",
+          "convidado_id",
+          "porta",
+          "hora"
+        ],
+        "rows": [
+          {
+            "id": 1,
+            "convidado_id": 2,
+            "porta": "principal",
+            "hora": "23:05"
+          },
+          {
+            "id": 2,
+            "convidado_id": 4,
+            "porta": "principal",
+            "hora": "22:58"
+          },
+          {
+            "id": 3,
+            "convidado_id": 5,
+            "porta": "fundos",
+            "hora": "22:05"
+          },
+          {
+            "id": 4,
+            "convidado_id": 6,
+            "porta": "garagem",
+            "hora": "23:02"
+          },
+          {
+            "id": 5,
+            "convidado_id": 7,
+            "porta": "garagem",
+            "hora": "23:40"
+          },
+          {
+            "id": 6,
+            "convidado_id": 1,
+            "porta": "principal",
+            "hora": "23:30"
+          },
+          {
+            "id": 7,
+            "convidado_id": 3,
+            "porta": "principal",
+            "hora": "23:15"
+          }
+        ]
+      }
+    ],
+    "culpado": "Leonel Faria",
+    "briefing": [
+      "O disco de ouro ficava no cofre do estúdio. O sensor do cofre mostra que ele foi retirado entre 22:00 e 23:00. A festa estava cheia e várias pessoas circularam pelas salas.",
+      "O segurança da garagem garante que o ladrão fugiu por uma porta de serviço: a dos fundos ou a da garagem. A porta principal estava cheia de fotógrafos e ninguém passou por ela com um disco na mão.",
+      "📘 Aula 2 · Combinando condições. AND exige que as duas condições sejam verdadeiras ao mesmo tempo. OR basta que uma seja. Exemplos de outra investigação: WHERE sala = 'Bar' AND hora >= '20:00'  e  WHERE porta = 'norte' OR porta = 'sul'.",
+      "📘 As horas aqui são texto no formato HH:MM, e a comparação funciona na ordem do relógio. Por isso hora >= '22:00' AND hora <= '23:00' pega só esse intervalo."
+    ],
+    "solucao": "SELECT * FROM acessos_salas WHERE sala = 'Cofre' AND hora >= '22:00' AND hora <= '23:00';\nSELECT * FROM saidas WHERE porta = 'fundos' OR porta = 'garagem';\n-- o convidado_id 6 aparece nas duas\nSELECT * FROM convidados WHERE id = 6;",
+    "dicas": [
+      "Resolva em duas etapas. Primeiro veja quem esteve no cofre na janela do roubo:\nSELECT * FROM acessos_salas WHERE sala = 'Cofre' AND hora >= '22:00' AND hora <= '23:00';",
+      "Agora veja quem saiu por uma porta de serviço:\nSELECT * FROM saidas WHERE porta = 'fundos' OR porta = 'garagem';\nCompare os convidado_id das duas consultas. Só um número aparece nas duas.",
+      "Solução completa:\nSELECT * FROM acessos_salas WHERE sala = 'Cofre' AND hora >= '22:00' AND hora <= '23:00';\nSELECT * FROM saidas WHERE porta = 'fundos' OR porta = 'garagem';\n-- o convidado_id 6 aparece nas duas\nSELECT * FROM convidados WHERE id = 6;"
+    ],
+    "objetivo": "Cruzar quem esteve no cofre na janela de tempo com quem saiu por uma porta de serviço. Só uma pessoa aparece nos dois registros."
+  },
+  {
+    "i": 2,
+    "id": "c3",
+    "num": 3,
+    "titulo": "O Relógio do Barão",
+    "d": "O relógio de bolso do Barão sumiu durante o leilão beneficente da Casa Sotero.",
+    "k": "roubo",
+    "l": "Casa Sotero",
+    "m": 1,
+    "lvl": 0,
+    "tag": "LIKE · IN",
+    "yard": false,
+    "xp": 90,
+    "tables": [
+      {
+        "name": "depoimentos",
+        "desc": "O que cada testemunha disse à polícia.",
+        "cols": [
+          "id",
+          "testemunha",
+          "texto"
+        ],
+        "rows": [
+          {
+            "id": 1,
+            "testemunha": "Ruth Amaral",
+            "texto": "Eu conduzia o leilão e não vi nada, o salão estava lotado de gente."
+          },
+          {
+            "id": 2,
+            "testemunha": "Nina Falcão",
+            "texto": "Vi alguém de chapéu verde perto da mesa do relógio, logo antes das luzes piscarem."
+          },
+          {
+            "id": 3,
+            "testemunha": "Pietra Gomes",
+            "texto": "Senti um perfume forte de charuto no corredor, mas não vi o rosto de ninguém."
+          },
+          {
+            "id": 4,
+            "testemunha": "Hélio Castanho",
+            "texto": "A pessoa de chapéu verde mexia no casaco e saiu apressada, quase derrubou uma bandeja."
+          },
+          {
+            "id": 5,
+            "testemunha": "Lauro Siqueira",
+            "texto": "Só a banda e o pessoal do serviço usam a porta lateral. Quem passou por ela estava com a mão no bolso."
+          },
+          {
+            "id": 6,
+            "testemunha": "Alaor Pinheiro",
+            "texto": "Passei a noite no bar discutindo um contrato. Não vi o relógio sumir."
+          },
+          {
+            "id": 7,
+            "testemunha": "Teodoro Veiga",
+            "texto": "Toquei até as dez e fui ao camarim. Só soube do sumiço quando ouvi o grito."
+          },
+          {
+            "id": 8,
+            "testemunha": "Osvaldo Reis",
+            "texto": "Estava na cozinha o tempo todo, preparando os canapés."
+          }
+        ]
+      },
+      {
+        "name": "convidados",
+        "desc": "Todos os presentes e o chapéu que cada um usava.",
+        "cols": [
+          "id",
+          "nome",
+          "profissao",
+          "chapeu"
+        ],
+        "rows": [
+          {
+            "id": 1,
+            "nome": "Alaor Pinheiro",
+            "profissao": "advogado",
+            "chapeu": "verde"
+          },
+          {
+            "id": 2,
+            "nome": "Sabino Duarte",
+            "profissao": "músico",
+            "chapeu": "verde"
+          },
+          {
+            "id": 3,
+            "nome": "Hélio Castanho",
+            "profissao": "garçom",
+            "chapeu": "cinza"
+          },
+          {
+            "id": 4,
+            "nome": "Nina Falcão",
+            "profissao": "garçom",
+            "chapeu": "preto"
+          },
+          {
+            "id": 5,
+            "nome": "Ruth Amaral",
+            "profissao": "leiloeira",
+            "chapeu": "nenhum"
+          },
+          {
+            "id": 6,
+            "nome": "Teodoro Veiga",
+            "profissao": "músico",
+            "chapeu": "nenhum"
+          },
+          {
+            "id": 7,
+            "nome": "Pietra Gomes",
+            "profissao": "florista",
+            "chapeu": "azul"
+          },
+          {
+            "id": 8,
+            "nome": "Osvaldo Reis",
+            "profissao": "cozinheiro",
+            "chapeu": "verde"
+          },
+          {
+            "id": 9,
+            "nome": "Lauro Siqueira",
+            "profissao": "garçom",
+            "chapeu": "nenhum"
+          }
+        ]
+      }
+    ],
+    "culpado": "Sabino Duarte",
+    "briefing": [
+      "O relógio de bolso do Barão estava exposto numa mesa do leilão. As luzes piscaram por um segundo e, quando voltaram, ele tinha sumido. A polícia colheu o depoimento de várias testemunhas e anotou tudo em texto livre.",
+      "O problema: são muitos depoimentos, e a maioria não ajuda em nada. Em vez de ler um por um, você vai procurar só os que falam do que importa.",
+      "📘 Aula 3 · Buscando dentro de textos. LIKE compara texto com um padrão, e o símbolo % significa 'qualquer coisa'. Exemplo de outra investigação: WHERE texto LIKE '%bengala%' acha todo texto que contém a palavra bengala, em qualquer posição.",
+      "📘 IN testa se um valor está numa lista. Exemplo: WHERE cidade IN ('Paris', 'Roma') é o mesmo que cidade = 'Paris' OR cidade = 'Roma', só que mais curto."
+    ],
+    "solucao": "SELECT * FROM depoimentos WHERE texto LIKE '%chapéu%';\nSELECT * FROM depoimentos WHERE texto LIKE '%porta lateral%';\nSELECT * FROM convidados WHERE chapeu = 'verde' AND profissao IN ('músico', 'garçom');",
+    "dicas": [
+      "Procure os depoimentos que falam de chapéu:\nSELECT * FROM depoimentos WHERE texto LIKE '%chapéu%';\nDepois procure o que fala da porta lateral:\nSELECT * FROM depoimentos WHERE texto LIKE '%porta lateral%';",
+      "As pistas são: chapéu verde, e alguém da banda (músico) ou do serviço (garçom). Monte o filtro:\nSELECT * FROM convidados WHERE chapeu = 'verde' AND profissao IN ('músico', 'garçom');",
+      "Solução completa:\nSELECT * FROM depoimentos WHERE texto LIKE '%chapéu%';\nSELECT * FROM depoimentos WHERE texto LIKE '%porta lateral%';\nSELECT * FROM convidados WHERE chapeu = 'verde' AND profissao IN ('músico', 'garçom');"
+    ],
+    "objetivo": "Descobrir, pelos depoimentos, a cor do chapéu e o tipo de profissional do ladrão. Depois achar o único convidado que se encaixa nas duas pistas."
+  },
+  {
+    "i": 3,
+    "id": "c4",
+    "num": 4,
+    "titulo": "A Coroa de Esmeraldas",
+    "d": "A coroa de esmeraldas da Duquesa desapareceu da vitrine do Museu Aurora na noite de inauguração.",
+    "k": "roubo",
+    "l": "Museu Aurora",
+    "m": 2,
+    "lvl": 0,
+    "tag": "ORDER BY · LIMIT",
+    "yard": false,
+    "xp": 100,
+    "tables": [
+      {
+        "name": "alarmes",
+        "desc": "Todos os alarmes disparados no museu, fora de ordem.",
+        "cols": [
+          "id",
+          "hora",
+          "sala",
+          "tipo"
+        ],
+        "rows": [
+          {
+            "id": 1,
+            "hora": "21:52",
+            "sala": "Entrada",
+            "tipo": "real"
+          },
+          {
+            "id": 2,
+            "hora": "18:05",
+            "sala": "Entrada",
+            "tipo": "teste"
+          },
+          {
+            "id": 3,
+            "hora": "21:47",
+            "sala": "Joias",
+            "tipo": "real"
+          },
+          {
+            "id": 4,
+            "hora": "21:49",
+            "sala": "Corredor Leste",
+            "tipo": "real"
+          },
+          {
+            "id": 5,
+            "hora": "18:06",
+            "sala": "Joias",
+            "tipo": "teste"
+          },
+          {
+            "id": 6,
+            "hora": "22:03",
+            "sala": "Cofre",
+            "tipo": "real"
+          },
+          {
+            "id": 7,
+            "hora": "21:58",
+            "sala": "Escultura",
+            "tipo": "real"
+          }
+        ]
+      },
+      {
+        "name": "passagens",
+        "desc": "Cada saída de uma sala registrada pelos sensores de porta.",
+        "cols": [
+          "id",
+          "visitante_id",
+          "sala",
+          "hora_saida"
+        ],
+        "rows": [
+          {
+            "id": 1,
+            "visitante_id": 11,
+            "sala": "Joias",
+            "hora_saida": "20:40"
+          },
+          {
+            "id": 2,
+            "visitante_id": 12,
+            "sala": "Joias",
+            "hora_saida": "21:15"
+          },
+          {
+            "id": 3,
+            "visitante_id": 13,
+            "sala": "Joias",
+            "hora_saida": "21:38"
+          },
+          {
+            "id": 4,
+            "visitante_id": 14,
+            "sala": "Joias",
+            "hora_saida": "21:44"
+          },
+          {
+            "id": 5,
+            "visitante_id": 15,
+            "sala": "Joias",
+            "hora_saida": "21:51"
+          },
+          {
+            "id": 6,
+            "visitante_id": 16,
+            "sala": "Escultura",
+            "hora_saida": "21:46"
+          },
+          {
+            "id": 7,
+            "visitante_id": 12,
+            "sala": "Escultura",
+            "hora_saida": "21:30"
+          },
+          {
+            "id": 8,
+            "visitante_id": 11,
+            "sala": "Cofre",
+            "hora_saida": "20:55"
+          }
+        ]
+      },
+      {
+        "name": "visitantes",
+        "desc": "Quem estava no museu.",
+        "cols": [
+          "id",
+          "nome",
+          "ocupacao"
+        ],
+        "rows": [
+          {
+            "id": 11,
+            "nome": "Ester Quintela",
+            "ocupacao": "professora"
+          },
+          {
+            "id": 12,
+            "nome": "Gaspar Neto",
+            "ocupacao": "estudante"
+          },
+          {
+            "id": 13,
+            "nome": "Marcos Teles",
+            "ocupacao": "guia"
+          },
+          {
+            "id": 14,
+            "nome": "Dulce Albuquerque",
+            "ocupacao": "restauradora"
+          },
+          {
+            "id": 15,
+            "nome": "Henrique Sampaio",
+            "ocupacao": "vigilante"
+          },
+          {
+            "id": 16,
+            "nome": "Zilda Moura",
+            "ocupacao": "turista"
+          }
+        ]
+      }
+    ],
+    "culpado": "Dulce Albuquerque",
+    "briefing": [
+      "A coroa estava na vitrine da sala Joias. Os sensores do museu dispararam vários alarmes naquela noite, mas alguns eram só testes do sistema, feitos antes de abrir. O que importa é o primeiro alarme real: ele marca o momento exato do roubo.",
+      "Quem tirou a coroa saiu da sala Joias pouco antes do alarme. A pessoa que saiu dali por último antes do alarme tocar é a principal suspeita.",
+      "📘 Aula 4 · Ordenar e limitar. ORDER BY coluna ordena o resultado: ASC do menor para o maior (é o padrão) e DESC do maior para o menor. LIMIT n mostra só as n primeiras linhas. Exemplo de outra investigação: ORDER BY preco DESC LIMIT 1 devolve o item mais caro.",
+      "📘 Você também pode escolher colunas em vez de usar *: SELECT hora, sala FROM alarmes. Menos colunas deixam o resultado mais fácil de ler."
+    ],
+    "solucao": "SELECT hora, sala FROM alarmes WHERE tipo = 'real' ORDER BY hora ASC LIMIT 1;\nSELECT visitante_id, hora_saida FROM passagens WHERE sala = 'Joias' AND hora_saida < '21:47' ORDER BY hora_saida DESC LIMIT 1;\nSELECT * FROM visitantes WHERE id = 14;",
+    "dicas": [
+      "Primeiro ache o primeiro alarme real, ordenando pela hora:\nSELECT hora, sala FROM alarmes WHERE tipo = 'real' ORDER BY hora ASC LIMIT 1;",
+      "O alarme foi às 21:47 na sala Joias. Agora veja quem saiu dessa sala antes disso, do mais tarde para o mais cedo:\nSELECT visitante_id, hora_saida FROM passagens WHERE sala = 'Joias' AND hora_saida < '21:47' ORDER BY hora_saida DESC LIMIT 1;",
+      "Solução completa:\nSELECT hora, sala FROM alarmes WHERE tipo = 'real' ORDER BY hora ASC LIMIT 1;\nSELECT visitante_id, hora_saida FROM passagens WHERE sala = 'Joias' AND hora_saida < '21:47' ORDER BY hora_saida DESC LIMIT 1;\nSELECT * FROM visitantes WHERE id = 14;"
+    ],
+    "objetivo": "Achar a sala e a hora do primeiro alarme real, descobrir quem foi o último a sair dessa sala antes dele e dar o nome completo."
+  },
+  {
+    "i": 4,
+    "id": "c5",
+    "num": 5,
+    "titulo": "O Cofre do Banco Real",
+    "d": "Alguém abriu o cofre do Banco Real de madrugada sem que ninguém tivesse autorizado.",
+    "k": "roubo",
+    "l": "Banco Real",
+    "m": 2,
+    "lvl": 0,
+    "tag": "IS NULL · BETWEEN",
+    "yard": false,
+    "xp": 120,
+    "tables": [
+      {
+        "name": "acessos_cofre",
+        "desc": "Cada abertura do cofre na noite do roubo.",
+        "cols": [
+          "id",
+          "funcionario_id",
+          "hora",
+          "autorizado_por"
+        ],
+        "rows": [
+          {
+            "id": 1,
+            "funcionario_id": 21,
+            "hora": "18:05",
+            "autorizado_por": 30
+          },
+          {
+            "id": 2,
+            "funcionario_id": 22,
+            "hora": "19:40",
+            "autorizado_por": 30
+          },
+          {
+            "id": 3,
+            "funcionario_id": 23,
+            "hora": "01:15",
+            "autorizado_por": null
+          },
+          {
+            "id": 4,
+            "funcionario_id": 24,
+            "hora": "02:20",
+            "autorizado_por": null
+          },
+          {
+            "id": 5,
+            "funcionario_id": 22,
+            "hora": "03:10",
+            "autorizado_por": 31
+          },
+          {
+            "id": 6,
+            "funcionario_id": 25,
+            "hora": "03:45",
+            "autorizado_por": null
+          },
+          {
+            "id": 7,
+            "funcionario_id": 21,
+            "hora": "05:30",
+            "autorizado_por": null
+          },
+          {
+            "id": 8,
+            "funcionario_id": 23,
+            "hora": "04:20",
+            "autorizado_por": 31
+          },
+          {
+            "id": 9,
+            "funcionario_id": 24,
+            "hora": "02:50",
+            "autorizado_por": null
+          }
+        ]
+      },
+      {
+        "name": "funcionarios",
+        "desc": "Equipe do banco.",
+        "cols": [
+          "id",
+          "nome",
+          "cargo"
+        ],
+        "rows": [
+          {
+            "id": 21,
+            "nome": "Amélia Torres",
+            "cargo": "gerente"
+          },
+          {
+            "id": 22,
+            "nome": "Bento Carvalho",
+            "cargo": "caixa"
+          },
+          {
+            "id": 23,
+            "nome": "Sérgio Lopes",
+            "cargo": "tesoureiro"
+          },
+          {
+            "id": 24,
+            "nome": "Cláudio Bastos",
+            "cargo": "segurança"
+          },
+          {
+            "id": 25,
+            "nome": "Renata Siqueira",
+            "cargo": "contadora"
+          },
+          {
+            "id": 30,
+            "nome": "Álvaro Pires",
+            "cargo": "diretor"
+          },
+          {
+            "id": 31,
+            "nome": "Helena Pires",
+            "cargo": "subdiretora"
+          }
+        ]
+      }
+    ],
+    "culpado": "Renata Siqueira",
+    "briefing": [
+      "O cofre do Banco Real registra cada abertura: quem abriu, a hora e quem autorizou. Na madrugada de ontem, uma quantia foi retirada. O roubo aconteceu entre 02:00 e 05:00, quando o sistema de câmeras estava em manutenção.",
+      "Toda abertura legítima precisa de uma autorização. Quando ninguém autorizou, o campo autorizado_por fica vazio, ou seja, NULL. O gerente também deixou um aviso: o segurança noturno ficou na portaria o tempo todo, filmado pela câmera da rua, então ele não pode ser o culpado.",
+      "📘 Aula 5 · NULL significa 'sem valor', e ele é especial: não se compara com =. Escrever autorizado_por = NULL nunca encontra nada. O correto é IS NULL (e IS NOT NULL para o contrário). Exemplo de outra investigação: WHERE telefone IS NULL acha quem não informou telefone.",
+      "📘 BETWEEN a AND b pega valores de a até b, inclusive. Exemplo: WHERE hora BETWEEN '02:00' AND '05:00'. O operador <> significa 'diferente de': cargo <> 'segurança'. E DISTINCT remove repetidos: SELECT DISTINCT coluna FROM tabela."
+    ],
+    "solucao": "SELECT * FROM acessos_cofre WHERE autorizado_por IS NULL AND hora BETWEEN '02:00' AND '05:00';\n-- aparecem os funcionários 24 e 25\nSELECT * FROM funcionarios WHERE id IN (24, 25) AND cargo <> 'segurança';",
+    "dicas": [
+      "Comece com todas as aberturas sem autorização:\nSELECT * FROM acessos_cofre WHERE autorizado_por IS NULL;\n(Se quiser ver cada pessoa só uma vez: SELECT DISTINCT funcionario_id FROM acessos_cofre WHERE autorizado_por IS NULL;)",
+      "Restrinja à janela do roubo:\nSELECT * FROM acessos_cofre WHERE autorizado_por IS NULL AND hora BETWEEN '02:00' AND '05:00';\nSobram duas pessoas (a que aparece duas vezes e outra). Descarte o segurança consultando os funcionários.",
+      "Solução completa:\nSELECT * FROM acessos_cofre WHERE autorizado_por IS NULL AND hora BETWEEN '02:00' AND '05:00';\n-- aparecem os funcionários 24 e 25\nSELECT * FROM funcionarios WHERE id IN (24, 25) AND cargo <> 'segurança';"
+    ],
+    "objetivo": "Achar as aberturas sem autorização feitas na janela do roubo e, entre os funcionários envolvidos, descartar o segurança. O que sobrar é o culpado."
+  },
+  {
+    "i": 5,
+    "id": "c6",
+    "num": 6,
+    "titulo": "O Colar de Safiras",
+    "d": "Um colar de safiras sumiu da biblioteca durante o baile de máscaras da Mansão Bragança. Todos estavam disfarçados.",
+    "k": "roubo",
+    "l": "Mansão Bragança",
+    "m": 2,
+    "lvl": 0,
+    "tag": "JOIN",
+    "yard": false,
+    "xp": 150,
+    "tables": [
+      {
+        "name": "convidados",
+        "desc": "Quem estava no baile e a máscara de cada um.",
+        "cols": [
+          "id",
+          "nome",
+          "mascara"
+        ],
+        "rows": [
+          {
+            "id": 1,
+            "nome": "Augusto Vilela",
+            "mascara": "pavão"
+          },
+          {
+            "id": 2,
+            "nome": "Marina Zanetti",
+            "mascara": "raposa"
+          },
+          {
+            "id": 3,
+            "nome": "Ulisses Bragança",
+            "mascara": "corvo"
+          },
+          {
+            "id": 4,
+            "nome": "Flora Menezes",
+            "mascara": "corvo"
+          },
+          {
+            "id": 5,
+            "nome": "Gustavo Prado",
+            "mascara": "lobo"
+          },
+          {
+            "id": 6,
+            "nome": "Irene Tavares",
+            "mascara": "coruja"
+          },
+          {
+            "id": 7,
+            "nome": "Horácio Beltrão",
+            "mascara": "arlequim"
+          },
+          {
+            "id": 8,
+            "nome": "Clarice Andrade",
+            "mascara": "gato"
+          }
+        ]
+      },
+      {
+        "name": "posicoes",
+        "desc": "Registro das câmeras: onde cada convidado foi visto e quando.",
+        "cols": [
+          "id",
+          "convidado_id",
+          "local",
+          "hora"
+        ],
+        "rows": [
+          {
+            "id": 1,
+            "convidado_id": 1,
+            "local": "Biblioteca",
+            "hora": "23:02"
+          },
+          {
+            "id": 2,
+            "convidado_id": 2,
+            "local": "Biblioteca",
+            "hora": "23:08"
+          },
+          {
+            "id": 3,
+            "convidado_id": 3,
+            "local": "Biblioteca",
+            "hora": "23:10"
+          },
+          {
+            "id": 4,
+            "convidado_id": 4,
+            "local": "Salão",
+            "hora": "23:10"
+          },
+          {
+            "id": 5,
+            "convidado_id": 5,
+            "local": "Salão",
+            "hora": "22:55"
+          },
+          {
+            "id": 6,
+            "convidado_id": 6,
+            "local": "Jardim",
+            "hora": "23:00"
+          },
+          {
+            "id": 7,
+            "convidado_id": 7,
+            "local": "Biblioteca",
+            "hora": "22:20"
+          },
+          {
+            "id": 8,
+            "convidado_id": 8,
+            "local": "Biblioteca",
+            "hora": "23:40"
+          },
+          {
+            "id": 9,
+            "convidado_id": 3,
+            "local": "Jardim",
+            "hora": "23:20"
+          }
+        ]
+      },
+      {
+        "name": "ocorrencias",
+        "desc": "Anotações da segurança.",
+        "cols": [
+          "id",
+          "hora",
+          "local",
+          "descricao"
+        ],
+        "rows": [
+          {
+            "id": 1,
+            "hora": "23:12",
+            "local": "Biblioteca",
+            "descricao": "Colar de safiras desaparece do mostruário. Vidro aberto sem quebrar."
+          },
+          {
+            "id": 2,
+            "hora": "23:20",
+            "local": "Jardim",
+            "descricao": "Convidado de máscara de corvo visto apressado perto do portão."
+          },
+          {
+            "id": 3,
+            "hora": "22:30",
+            "local": "Salão",
+            "descricao": "Discussão entre dois convidados sobre uma dívida de jogo."
+          }
+        ]
+      }
+    ],
+    "culpado": "Ulisses Bragança",
+    "briefing": [
+      "O colar de safiras estava num mostruário da biblioteca. Ele sumiu às 23:12, sem que o vidro fosse quebrado. Num baile de máscaras ninguém reconhece ninguém, então a segurança só tem dois registros: onde cada convidado estava, e qual máscara cada um usava.",
+      "Uma testemunha viu, logo depois do roubo, um convidado de máscara de corvo apressado perto do portão do jardim. Como o ladrão estava na biblioteca antes das 23:12, só pode ser quem estava lá entre 23:00 e 23:12.",
+      "📘 Aula 6 · JOIN. As informações estão espalhadas em tabelas diferentes: posicoes guarda o convidado_id, e o nome e a máscara ficam em convidados. O JOIN liga as duas pela coluna em comum. Exemplo de outra investigação: SELECT c.nome, p.valor FROM pedidos p JOIN clientes c ON c.id = p.cliente_id;",
+      "📘 Dê um apelido curto a cada tabela (pedidos p, clientes c) e escreva apelido.coluna (como c.nome) para deixar claro de qual tabela vem cada coluna. Depois do JOIN, o WHERE funciona normalmente, com AND, BETWEEN e tudo que você já aprendeu."
+    ],
+    "solucao": "SELECT c.nome, c.mascara, p.hora\nFROM posicoes p\nJOIN convidados c ON c.id = p.convidado_id\nWHERE p.local = 'Biblioteca' AND p.hora BETWEEN '23:00' AND '23:12';\n-- entre os três, só Ulisses usa a máscara de corvo",
+    "dicas": [
+      "Leia as ocorrencias primeiro (SELECT * FROM ocorrencias;). Depois monte o JOIN que mostra o nome de cada pessoa vista na biblioteca:\nSELECT c.nome, c.mascara, p.hora\nFROM posicoes p\nJOIN convidados c ON c.id = p.convidado_id\nWHERE p.local = 'Biblioteca';",
+      "Acrescente o filtro de horário: AND p.hora BETWEEN '23:00' AND '23:12'. Sobram três pessoas, e só uma usa a máscara de corvo. Cuidado: existe outra pessoa de máscara de corvo, mas ela estava em outro lugar.",
+      "Solução completa:\nSELECT c.nome, c.mascara, p.hora\nFROM posicoes p\nJOIN convidados c ON c.id = p.convidado_id\nWHERE p.local = 'Biblioteca' AND p.hora BETWEEN '23:00' AND '23:12';\n-- entre os três, só Ulisses usa a máscara de corvo"
+    ],
+    "objetivo": "Ligar posições e convidados com um JOIN, listar quem estava na biblioteca antes do roubo e achar quem usava a máscara de corvo."
+  }
+];
+const HAND = {};
+INICIANTE.forEach(h => {
+  HAND[h.id] = h;
+  Object.assign(CASES[h.i], { titulo: h.titulo, d: h.d, k: h.k, l: h.l, tag: h.tag, yard: h.yard, xp: h.xp, lvl: h.lvl });
+});
+
 function buildCase(meta, seedAdd = 0) {
+  if (HAND[meta.id]) return { ...meta, ...HAND[meta.id] };
   const R = RNG(meta.seed + seedAdd), cr = CRIMES[meta.i];
   const o = MECHS[meta.m].f(R, cr);
   return { ...meta, ...o, dicas: [...o.dicas, 'Solução completa:\n' + o.solucao], objetivo: `Descubra quem é ${KIND_R[cr.k] ? 'o ' + KIND_R[cr.k] : 'o culpado'} e digite o nome completo na acusação.` };
